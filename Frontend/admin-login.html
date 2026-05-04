@@ -42,7 +42,10 @@
       </div>
       <div class="form-group">
         <label>Password</label>
-        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" />
+        <div style="position:relative;">
+          <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" style="padding-right:40px;" />
+          <span onclick="togglePwd('password',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:1rem;user-select:none;">👁️</span>
+        </div>
       </div>
       <button class="btn" id="loginBtn" onclick="handleLogin()">Sign In</button>
     </div>
@@ -51,6 +54,13 @@
   <script>
     // Always require fresh login — clear any existing token
     localStorage.removeItem('admin_token');
+
+    function togglePwd(id, el) {
+      const inp = document.getElementById(id);
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+      el.textContent = inp.type === 'password' ? '👁️' : '🙈';
+    }
+
     async function handleLogin() {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;

@@ -335,7 +335,10 @@
           </div>
           <div class="form-group">
             <label for="loginPassword">Password</label>
-            <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" />
+            <div style="position:relative;">
+              <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" style="padding-right:40px;" />
+              <span onclick="togglePwd('loginPassword',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:1rem;user-select:none;">👁️</span>
+            </div>
           </div>
           <button class="btn-submit" id="loginBtn" onclick="handleLogin()">
             <span>Sign In</span>
@@ -400,7 +403,10 @@
 
           <div class="form-group">
             <label for="regPassword">Password <span class="req">*</span> <span style="font-weight:400;color:var(--muted)">(min 8 characters)</span></label>
-            <input type="password" id="regPassword" placeholder="••••••••" autocomplete="new-password" />
+            <div style="position:relative;">
+              <input type="password" id="regPassword" placeholder="••••••••" autocomplete="new-password" style="padding-right:40px;" />
+              <span onclick="togglePwd('regPassword',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:1rem;user-select:none;">👁️</span>
+            </div>
           </div>
 
           <!-- REGISTRATION NUMBER — required for verification -->
@@ -470,6 +476,12 @@
       el.innerHTML = html;
       el.classList.add('show');
       el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function togglePwd(id, el) {
+      const inp = document.getElementById(id);
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+      el.textContent = inp.type === 'password' ? '👁️' : '🙈';
     }
 
     // ── LOGIN ───────────────────────────────────────────────

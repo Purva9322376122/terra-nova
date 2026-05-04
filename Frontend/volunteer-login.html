@@ -90,7 +90,7 @@ input:focus{border-color:var(--forest-mid);box-shadow:0 0 0 3px rgba(45,106,79,.
         <div class="form-title">Welcome back</div>
         <div class="form-subtitle">Sign in to your volunteer account</div>
         <div class="form-group"><label>Email Address</label><input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email"/></div>
-        <div class="form-group"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"/></div>
+        <div class="form-group"><label>Password</label><div style="position:relative;"><input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" style="padding-right:40px;"/><span onclick="togglePwd('loginPassword',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:1rem;user-select:none;">👁️</span></div></div>
         <button class="btn-submit" id="loginBtn" onclick="handleLogin()"><span>Sign In</span></button>
         <p style="text-align:center;margin-top:12px;font-size:0.78rem;color:var(--muted)">
           <button onclick="toggleForgot()" style="background:none;border:none;color:var(--forest-mid);cursor:pointer;font-size:0.78rem;font-family:'DM Sans',sans-serif;font-weight:600;text-decoration:underline">Forgot password?</button>
@@ -113,7 +113,7 @@ input:focus{border-color:var(--forest-mid);box-shadow:0 0 0 3px rgba(45,106,79,.
           <div class="form-group"><label>Phone</label><input type="tel" id="regPhone" placeholder="+91 98765 43210"/></div>
         </div>
         <div class="form-group"><label>Email Address <span class="req">*</span></label><input type="email" id="regEmail" placeholder="you@example.com" autocomplete="email"/></div>
-        <div class="form-group"><label>Password <span class="req">*</span> <span style="font-weight:400;color:var(--muted)">(min 8 chars)</span></label><input type="password" id="regPassword" placeholder="••••••••" autocomplete="new-password"/></div>
+        <div class="form-group"><label>Password <span class="req">*</span> <span style="font-weight:400;color:var(--muted)">(min 8 chars)</span></label><div style="position:relative;"><input type="password" id="regPassword" placeholder="••••••••" autocomplete="new-password" style="padding-right:40px;"/><span onclick="togglePwd('regPassword',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:1rem;user-select:none;">👁️</span></div></div>
         <div class="form-row">
           <div class="form-group"><label>Skills</label><input type="text" id="regSkills" placeholder="e.g. Teaching, Coding"/></div>
           <div class="form-group"><label>Location</label><input type="text" id="regLocation" placeholder="City, State"/></div>
@@ -135,6 +135,12 @@ input:focus{border-color:var(--forest-mid);box-shadow:0 0 0 3px rgba(45,106,79,.
   }
   function clearBanners(){['bannerError','bannerSuccess'].forEach(id=>{const el=document.getElementById(id);el.classList.remove('show');el.innerHTML='';})}
   function showBanner(type,html){clearBanners();const el=document.getElementById('banner'+type.charAt(0).toUpperCase()+type.slice(1));el.innerHTML=html;el.classList.add('show');}
+
+  function togglePwd(id, el) {
+    const inp = document.getElementById(id);
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    el.textContent = inp.type === 'password' ? '👁️' : '🙈';
+  }
 
   async function handleLogin() {
     const email=document.getElementById('loginEmail').value.trim();
