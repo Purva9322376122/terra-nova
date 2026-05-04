@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Volunteer Hours Tracker — Terra Nova</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--forest:#1a3a2e;--forest-mid:#2d6a4f;--forest-lt:#52b788;--gold:#d4a853;--gold-lt:#e8c57a;--ivory:#f5f0e8;--ivory-dk:#ede6d8;--ivory-mid:#d9d0bc;--muted:#5a7365;--white:#fff;--red:#c0392b;--radius:10px}
+  body{font-family:'DM Sans',sans-serif;background:var(--ivory);color:var(--forest);min-height:100vh}
+  nav{background:var(--forest);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+  .nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ivory);font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700}
+  .nav-logo svg{width:20px;height:26px;color:var(--forest-lt)}
+  .nav-right{display:flex;align-items:center;gap:12px}
+  .nav-link{color:rgba(245,240,232,0.65);font-size:0.85rem;text-decoration:none}
+  .nav-link:hover{color:var(--ivory)}
+  .btn-nav{background:var(--gold);color:var(--forest);padding:7px 18px;border-radius:100px;font-size:0.85rem;font-weight:700;text-decoration:none}
+  .hero{background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 60%,#3a8a6a 100%);padding:60px 32px;text-align:center;position:relative;overflow:hidden}
+  .hero::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:40px 40px}
+  .hero-inner{position:relative;z-index:1}
+  .hero-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(212,168,83,0.15);border:1px solid rgba(212,168,83,0.3);color:var(--gold-lt);font-size:0.74rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:5px 14px;border-radius:100px;margin-bottom:20px}
+  .hero-badge span{width:5px;height:5px;background:var(--gold-lt);border-radius:50%;display:inline-block}
+  .hero h1{font-family:'Playfair Display',serif;font-size:2.6rem;font-weight:700;color:var(--ivory);line-height:1.15;margin-bottom:12px}
+  .hero h1 em{font-style:italic;color:var(--gold-lt)}
+  .hero p{color:rgba(245,240,232,0.65);font-size:0.95rem;max-width:480px;margin:0 auto}
+  .container{max-width:900px;margin:0 auto;padding:40px 24px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .card{background:var(--white);border:1px solid var(--ivory-mid);border-radius:14px;padding:28px}
+  .card-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--forest);margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--ivory-dk)}
+  .form-group{margin-bottom:14px}
+  label{display:block;font-size:0.76rem;font-weight:600;color:var(--forest);margin-bottom:5px}
+  .req{color:var(--red)}
+  input,select,textarea{width:100%;padding:10px 13px;font-size:0.88rem;font-family:'DM Sans',sans-serif;color:var(--forest);background:var(--ivory);border:1.5px solid var(--ivory-mid);border-radius:var(--radius);outline:none;transition:border-color .2s}
+  input:focus,select:focus,textarea:focus{border-color:var(--forest-mid);background:var(--white)}
+  textarea{resize:vertical;min-height:70px}
+  .btn{width:100%;padding:12px;background:var(--forest);color:var(--ivory);font-size:0.9rem;font-weight:600;font-family:'DM Sans',sans-serif;border:none;border-radius:var(--radius);cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+  .btn:hover{background:var(--forest-mid)}
+  .btn:disabled{opacity:.6;cursor:not-allowed}
+  .alert{border-radius:var(--radius);padding:11px 14px;font-size:0.82rem;margin-bottom:14px;display:none}
+  .alert.show{display:block}
+  .alert-success{background:rgba(82,183,136,0.1);border:1px solid rgba(82,183,136,0.25);color:var(--forest-mid)}
+  .alert-error{background:rgba(192,57,43,.08);border:1px solid rgba(192,57,43,.2);color:var(--red)}
+  /* History panel */
+  .history-search{display:flex;gap:8px;margin-bottom:16px}
+  .history-search input{flex:1}
+  .history-search button{padding:10px 16px;background:var(--forest);color:var(--ivory);border:none;border-radius:var(--radius);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.85rem;white-space:nowrap}
+  .history-search button:hover{background:var(--forest-mid)}
+  .stats-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+  .stat-box{background:var(--ivory);border-radius:var(--radius);padding:14px;text-align:center}
+  .stat-num{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--forest)}
+  .stat-label{font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+  .log-item{padding:12px 0;border-bottom:1px solid var(--ivory-dk);display:flex;gap:12px;align-items:flex-start}
+  .log-item:last-child{border-bottom:none}
+  .log-hours{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--forest),var(--forest-mid));color:var(--ivory);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+  .log-hours .h{font-size:1rem;font-weight:700;line-height:1}
+  .log-hours .l{font-size:0.55rem;text-transform:uppercase;letter-spacing:.05em;opacity:.7}
+  .log-info .campaign{font-size:0.88rem;font-weight:600;color:var(--forest)}
+  .log-info .meta{font-size:0.72rem;color:var(--muted);margin-top:2px}
+  .log-info .desc{font-size:0.78rem;color:var(--muted);margin-top:4px;font-style:italic}
+  .empty-state{text-align:center;padding:40px 20px;color:var(--muted)}
+  .empty-state .ei{font-size:2.5rem;margin-bottom:10px}
+  .spinner{width:32px;height:32px;border:3px solid var(--ivory-dk);border-top-color:var(--forest-mid);border-radius:50%;animation:spin .7s linear infinite;margin:30px auto}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media(max-width:700px){.grid{grid-template-columns:1fr}.stats-row{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <svg viewBox="0 0 32 42" fill="none"><path d="M16 40 C16 40 2 30 2 16 C2 8 8 2 16 2 C24 2 30 8 30 16 C30 30 16 40 16 40Z" fill="currentColor"/><line x1="16" y1="40" x2="16" y2="10" stroke="#1a3a2e" stroke-width="1.2"/></svg>
+    Terra Nova
+  </a>
+  <div class="nav-right">
+    <a href="index.html" class="nav-link">← Back to main site</a>
+    <a href="index.html#volunteer" class="btn-nav">Volunteer</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge"><span></span>Volunteer Portal</div>
+    <h1>Track Your<br/><em>Volunteer Hours</em></h1>
+    <p>Log your hours, track your impact, and get a certificate of participation.</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="grid">
+
+    <!-- LOG HOURS FORM -->
+    <div class="card">
+      <div class="card-title">📝 Log Your Hours</div>
+      <div class="alert alert-success" id="logSuccess"></div>
+      <div class="alert alert-error"   id="logError"></div>
+
+      <div class="form-group">
+        <label>Full Name <span class="req">*</span></label>
+        <input type="text" id="vName" placeholder="Your full name" />
+      </div>
+      <div class="form-group">
+        <label>Email Address <span class="req">*</span></label>
+        <input type="email" id="vEmail" placeholder="your@email.com" />
+      </div>
+      <div class="form-group">
+        <label>Campaign / Activity <span class="req">*</span></label>
+        <input type="text" id="vCampaign" placeholder="e.g. Amazon Reforestation, Clean Water Drive" />
+      </div>
+      <div class="form-group">
+        <label>NGO Name</label>
+        <input type="text" id="vNgo" placeholder="e.g. Green Earth Foundation" />
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label>Hours Worked <span class="req">*</span></label>
+          <input type="number" id="vHours" placeholder="e.g. 4" min="0.5" step="0.5" />
+        </div>
+        <div class="form-group">
+          <label>Date <span class="req">*</span></label>
+          <input type="date" id="vDate" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>What did you do? (optional)</label>
+        <textarea id="vDesc" placeholder="Briefly describe your volunteer work…"></textarea>
+      </div>
+      <button class="btn" id="logBtn" onclick="logHours()">
+        <span id="logBtnText">✅ Log Hours</span>
+      </button>
+    </div>
+
+    <!-- VIEW HISTORY -->
+    <div class="card">
+      <div class="card-title">📊 View Your History</div>
+      <div class="history-search">
+        <input type="email" id="histEmail" placeholder="Enter your email to view history" />
+        <button onclick="loadHistory()">Search</button>
+      </div>
+      <div id="historyContent">
+        <div class="empty-state"><div class="ei">🙋</div><p>Enter your email above to see your volunteer history.</p></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script>
+
+  // Pre-fill today's date
+  document.getElementById('vDate').value = new Date().toISOString().split('T')[0];
+
+  // Pre-fill from volunteer registration if available
+  const savedEmail = localStorage.getItem('vol_email');
+  if (savedEmail) document.getElementById('vEmail').value = savedEmail;
+
+  async function logHours() {
+    const name     = document.getElementById('vName').value.trim();
+    const email    = document.getElementById('vEmail').value.trim();
+    const campaign = document.getElementById('vCampaign').value.trim();
+    const ngoName  = document.getElementById('vNgo').value.trim();
+    const hours    = parseFloat(document.getElementById('vHours').value);
+    const date     = document.getElementById('vDate').value;
+    const desc     = document.getElementById('vDesc').value.trim();
+
+    const errEl = document.getElementById('logError');
+    const sucEl = document.getElementById('logSuccess');
+    errEl.classList.remove('show'); sucEl.classList.remove('show');
+
+    if (!name)     return showAlert('logError', '⚠️ Please enter your name.');
+    if (!email || !email.includes('@')) return showAlert('logError', '⚠️ Please enter a valid email.');
+    if (!campaign) return showAlert('logError', '⚠️ Please enter the campaign name.');
+    if (!hours || hours < 0.5) return showAlert('logError', '⚠️ Minimum 0.5 hours.');
+    if (!date)     return showAlert('logError', '⚠️ Please select a date.');
+
+    const btn = document.getElementById('logBtn');
+    const btnText = document.getElementById('logBtnText');
+    btn.disabled = true; btnText.textContent = 'Logging…';
+
+    try {
+      const res  = await fetch(`${API}/api/volunteer-hours`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ volunteerName: name, volunteerEmail: email, campaign, ngoName, hours, date, description: desc })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showAlert('logSuccess', `✅ ${hours} hour${hours !== 1 ? 's' : ''} logged for "${campaign}"!`);
+        localStorage.setItem('vol_email', email);
+        document.getElementById('vHours').value = '';
+        document.getElementById('vDesc').value  = '';
+        document.getElementById('vDate').value  = new Date().toISOString().split('T')[0];
+        // Auto-load history
+        document.getElementById('histEmail').value = email;
+        loadHistory();
+      } else {
+        showAlert('logError', '⚠️ ' + (data.error || 'Failed to log hours.'));
+      }
+    } catch { showAlert('logError', '⚠️ Could not connect to server.'); }
+    finally { btn.disabled = false; btnText.textContent = '✅ Log Hours'; }
+  }
+
+  async function loadHistory() {
+    const email = document.getElementById('histEmail').value.trim();
+    const el    = document.getElementById('historyContent');
+    if (!email) { el.innerHTML = '<div class="empty-state"><div class="ei">🙋</div><p>Enter your email to see history.</p></div>'; return; }
+
+    el.innerHTML = '<div class="spinner"></div>';
+    try {
+      const res  = await fetch(`${API}/api/volunteer-hours/${encodeURIComponent(email)}`);
+      const data = await res.json();
+      if (!data.success || !data.data.length) {
+        el.innerHTML = '<div class="empty-state"><div class="ei">📋</div><p>No hours logged yet for this email.</p></div>';
+        return;
+      }
+      const logs = data.data;
+      const totalHours = data.totalHours;
+      const sessions   = logs.length;
+      const campaigns  = [...new Set(logs.map(l => l.campaign))].length;
+
+      el.innerHTML = `
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-num">${totalHours}</div><div class="stat-label">Total Hours</div></div>
+          <div class="stat-box"><div class="stat-num">${sessions}</div><div class="stat-label">Sessions</div></div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-num">${campaigns}</div><div class="stat-label">Campaigns</div></div>
+          <div class="stat-box"><div class="stat-num">${Math.round(totalHours * 60)}</div><div class="stat-label">Minutes</div></div>
+        </div>
+        <div style="max-height:280px;overflow-y:auto">
+          ${logs.map(l => {
+            const d = new Date(l.date).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+            return `<div class="log-item">
+              <div class="log-hours"><div class="h">${l.hours}</div><div class="l">hrs</div></div>
+              <div class="log-info">
+                <div class="campaign">${l.campaign}${l.ngoName ? ' · ' + l.ngoName : ''}</div>
+                <div class="meta">📅 ${d}</div>
+                ${l.description ? `<div class="desc">"${l.description}"</div>` : ''}
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+        <div style="text-align:center;margin-top:16px">
+          <button onclick="printCert('${email}', ${totalHours}, ${sessions})" style="padding:9px 20px;background:var(--forest);color:var(--ivory);border:none;border-radius:var(--radius);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.85rem">🖨️ Print Certificate</button>
+        </div>`;
+    } catch { el.innerHTML = '<div class="empty-state"><div class="ei">⚠️</div><p>Could not connect to server.</p></div>'; }
+  }
+
+  function printCert(email, hours, sessions) {
+    const win = window.open('', '_blank');
+    win.document.write(`<!DOCTYPE html><html><head><title>Volunteer Certificate</title>
+    <style>body{font-family:Georgia,serif;padding:60px;max-width:700px;margin:0 auto;color:#1a3a2e}
+    h1{font-size:2rem;color:#1a3a2e;margin-bottom:8px}.sub{color:#5a7365;margin-bottom:40px}
+    .big{font-size:3rem;font-weight:700;color:#2d6a4f;margin:20px 0}.label{font-size:0.85rem;color:#5a7365;text-transform:uppercase;letter-spacing:.05em}
+    table{width:100%;border-collapse:collapse;margin:24px 0}td{padding:10px 0;border-bottom:1px solid #ede6d8;font-size:0.95rem}td:first-child{color:#5a7365;width:40%}
+    .footer{margin-top:60px;font-size:0.8rem;color:#9ca3af;border-top:1px solid #ede6d8;padding-top:16px}</style>
+    </head><body>
+    <h1>🌿 Terra Nova NGO</h1><p class="sub">Certificate of Volunteer Participation</p>
+    <p class="label">Total Hours Contributed</p><div class="big">${hours} hrs</div>
+    <table>
+      <tr><td>Volunteer Email</td><td><strong>${email}</strong></td></tr>
+      <tr><td>Total Sessions</td><td>${sessions}</td></tr>
+      <tr><td>Total Hours</td><td>${hours} hours</td></tr>
+      <tr><td>Issued On</td><td>${new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}</td></tr>
+    </table>
+    <p class="footer">Terra Nova NGO · This certificate is auto-generated based on logged volunteer hours. For queries contact ${document.querySelector('.nav-logo').textContent.trim()}.</p>
+    </body></html>`);
+    win.document.close();
+    win.print();
+  }
+
+  function showAlert(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg; el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 5000);
+  }
+</script>
+</body>
+</html>

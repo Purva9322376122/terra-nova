@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Donor Dashboard — Terra Nova</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --forest: #1a3a2e; --forest-mid: #2d6a4f; --forest-lt: #52b788;
+      --ivory: #f5f0e8; --ivory-dk: #ede6d8; --ivory-mid: #d9d0bc;
+      --muted: #5a7365; --white: #ffffff; --red: #c0392b;
+      --red-lt: rgba(192,57,43,0.08); --radius: 10px; --sidebar-w: 240px;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--ivory); min-height: 100vh; display: flex; color: var(--forest); }
+    .sidebar { width: var(--sidebar-w); background: var(--forest); min-height: 100vh; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; z-index: 100; }
+    .sidebar-logo { display: flex; align-items: center; gap: 8px; padding: 22px 20px; text-decoration: none; color: var(--ivory); font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .sidebar-logo svg { width: 20px; height: 26px; color: var(--forest-lt); }
+    .sidebar-info { padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .si-label { font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: rgba(245,240,232,0.4); margin-bottom: 4px; }
+    .si-name  { font-size: 0.88rem; font-weight: 600; color: var(--ivory); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .si-email { font-size: 0.72rem; color: rgba(245,240,232,0.45); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-nav { flex: 1; padding: 12px 10px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius); font-size: 0.85rem; font-weight: 500; color: rgba(245,240,232,0.55); cursor: pointer; transition: all 0.15s; margin-bottom: 2px; border: none; background: none; width: 100%; text-align: left; text-decoration: none; }
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: var(--ivory); }
+    .nav-item.active { background: rgba(82,183,136,0.15); color: var(--forest-lt); }
+    .nav-item-icon { font-size: 1rem; width: 20px; text-align: center; }
+    .sidebar-footer { padding: 12px 10px; border-top: 1px solid rgba(255,255,255,0.08); }
+    .btn-logout { display: flex; align-items: center; gap: 8px; width: 100%; padding: 9px 12px; background: rgba(192,57,43,0.15); border: 1px solid rgba(192,57,43,0.2); border-radius: var(--radius); color: #e88080; font-size: 0.82rem; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; }
+    .btn-logout:hover { background: rgba(192,57,43,0.25); }
+    .main { margin-left: var(--sidebar-w); flex: 1; padding: 32px; max-width: calc(100vw - var(--sidebar-w)); }
+    .page-section { display: none; }
+    .page-section.active { display: block; }
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-family: 'Playfair Display', serif; font-size: 1.7rem; font-weight: 700; color: var(--forest); }
+    .page-header p { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+    .stat-card { background: var(--white); border: 1px solid var(--ivory-mid); border-radius: var(--radius); padding: 18px 20px; }
+    .sc-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+    .sc-num { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--forest); line-height: 1; margin: 6px 0 4px; }
+    .sc-sub { font-size: 0.72rem; color: var(--muted); }
+    .card { background: var(--white); border: 1px solid var(--ivory-mid); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; }
+    .card-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: var(--forest); margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--ivory-dk); display: flex; align-items: center; justify-content: space-between; }
+    .form-group { margin-bottom: 14px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    label { display: block; font-size: 0.76rem; font-weight: 600; color: var(--forest); margin-bottom: 5px; }
+    input { width: 100%; padding: 9px 12px; font-size: 0.85rem; font-family: 'DM Sans', sans-serif; color: var(--forest); background: var(--ivory); border: 1.5px solid var(--ivory-mid); border-radius: var(--radius); outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+    input:focus { border-color: var(--forest-mid); box-shadow: 0 0 0 3px rgba(45,106,79,0.1); background: var(--white); }
+    input[readonly] { opacity: 0.6; cursor: not-allowed; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; font-size: 0.83rem; font-weight: 600; font-family: 'DM Sans', sans-serif; border-radius: var(--radius); cursor: pointer; border: none; transition: all 0.15s; }
+    .btn-primary { background: var(--forest); color: var(--ivory); }
+    .btn-primary:hover { background: var(--forest-mid); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-sm { padding: 6px 13px; font-size: 0.78rem; }
+    .btn-ghost { background: var(--ivory-dk); color: var(--forest); border: 1px solid var(--ivory-mid); }
+    .btn-ghost:hover { background: var(--ivory-mid); }
+    .btn-danger { background: var(--red-lt); color: var(--red); border: 1px solid rgba(192,57,43,0.2); }
+    .btn-danger:hover { background: rgba(192,57,43,0.15); }
+    .alert { padding: 10px 14px; border-radius: var(--radius); font-size: 0.82rem; font-weight: 500; margin-bottom: 16px; display: none; }
+    .alert.show { display: block; }
+    .alert-success { background: rgba(82,183,136,0.1); border: 1px solid rgba(82,183,136,0.25); color: var(--forest-mid); }
+    .alert-error { background: var(--red-lt); border: 1px solid rgba(192,57,43,0.2); color: var(--red); }
+    .don-table { width: 100%; border-collapse: collapse; }
+    .don-table th { text-align: left; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); padding: 0 12px 10px; border-bottom: 1px solid var(--ivory-dk); }
+    .don-table td { padding: 12px; font-size: 0.83rem; color: var(--forest); border-bottom: 1px solid var(--ivory-dk); vertical-align: middle; }
+    .don-table tr:last-child td { border-bottom: none; }
+    .don-table tr:hover td { background: var(--ivory); }
+    .badge { display: inline-block; font-size: 0.68rem; font-weight: 600; padding: 3px 8px; border-radius: 100px; }
+    .badge-once    { background: rgba(82,183,136,0.1); color: var(--forest-mid); border: 1px solid rgba(82,183,136,0.2); }
+    .badge-monthly { background: rgba(212,168,83,0.15); color: #8a6200; border: 1px solid rgba(212,168,83,0.3); }
+    .badge-annual  { background: rgba(100,60,180,0.1); color: #4a2a8c; border: 1px solid rgba(100,60,180,0.2); }
+    .wishlist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+    .wish-card { background: var(--ivory); border: 1.5px solid var(--ivory-mid); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .wish-card-name { font-size: 0.88rem; font-weight: 600; color: var(--forest); }
+    .wish-card-actions { display: flex; gap: 8px; }
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 0.88rem; }
+    .empty-state .es-icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .spinner { width: 36px; height: 36px; border: 3px solid var(--ivory-dk); border-top-color: var(--forest-mid); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 40px auto; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #certArea { display: none; }
+    @media print {
+      body > *:not(#certArea) { display: none !important; }
+      #certArea { display: block !important; font-family: Georgia, serif; padding: 60px; }
+      #certArea h1 { font-size: 2rem; color: #1a3a2e; margin-bottom: 8px; }
+      #certArea .cert-sub { color: #5a7365; margin-bottom: 40px; }
+      #certArea table { width: 100%; border-collapse: collapse; }
+      #certArea td { padding: 10px 0; border-bottom: 1px solid #ede6d8; font-size: 0.95rem; }
+      #certArea td:first-child { color: #5a7365; width: 40%; }
+      #certArea .cert-footer { margin-top: 60px; font-size: 0.8rem; color: #9ca3af; }
+    }
+    @media (max-width: 900px) { .stats-row { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 640px) { .sidebar { width: 100%; min-height: auto; position: relative; } .main { margin-left: 0; padding: 20px; max-width: 100%; } .form-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <!-- PRINT RECEIPT AREA -->
+  <div id="certArea">
+    <h1>🌿 Terra Nova — Donation Receipt</h1>
+    <p class="cert-sub">Thank you for supporting our mission.</p>
+    <table id="certTable"></table>
+    <p class="cert-footer">Terra Nova NGO · Auto-generated receipt · support@terranova.org</p>
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo">
+      <svg viewBox="0 0 32 42" fill="none"><path d="M16 40 C16 40 2 30 2 16 C2 8 8 2 16 2 C24 2 30 8 30 16 C30 30 16 40 16 40Z" fill="currentColor"/><line x1="16" y1="40" x2="16" y2="10" stroke="#1a3a2e" stroke-width="1.2"/></svg>
+      Terra Nova
+    </a>
+    <div class="sidebar-info">
+      <div class="si-label">Donor Account</div>
+      <div class="si-name"  id="sidebarName">—</div>
+      <div class="si-email" id="sidebarEmail">—</div>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" onclick="showSection('overview')"><span class="nav-item-icon">📊</span> Overview</button>
+      <button class="nav-item" onclick="showSection('history')"><span class="nav-item-icon">📋</span> Donation History</button>
+      <button class="nav-item" onclick="showSection('wishlist')"><span class="nav-item-icon">❤️</span> Wishlist</button>
+      <button class="nav-item" onclick="showSection('profile')"><span class="nav-item-icon">👤</span> My Profile</button>
+      <a href="index.html" class="nav-item"><span class="nav-item-icon">🌐</span> Public Site</a>
+      <a href="leaderboard.html" class="nav-item"><span class="nav-item-icon">🏆</span> Leaderboard</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="logout()">🚪 Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div id="loadingSpinner"><div class="spinner"></div></div>
+
+    <!-- OVERVIEW -->
+    <div class="page-section" id="overviewSection">
+      <div class="page-header">
+        <h1 id="welcomeTitle">Welcome back!</h1>
+        <p>Here's a summary of your giving journey.</p>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="sc-label">Total Donated</div><div class="sc-num" id="statTotal">₹0</div><div class="sc-sub">All time</div></div>
+        <div class="stat-card"><div class="sc-label">Donations Made</div><div class="sc-num" id="statCount">0</div><div class="sc-sub">Transactions</div></div>
+        <div class="stat-card"><div class="sc-label">Campaigns Saved</div><div class="sc-num" id="statWishlist">0</div><div class="sc-sub">In your wishlist</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Recent Donations</div>
+        <div id="recentDonations"><div class="empty-state"><div class="es-icon">💚</div><p>No donations yet. <a href="index.html#donate" style="color:var(--forest-mid);font-weight:600">Make your first donation</a></p></div></div>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="page-section" id="historySection">
+      <div class="page-header">
+        <h1>Donation History</h1>
+        <p>All your donations with printable receipts.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">All Donations <span id="historyCount" style="font-size:0.8rem;font-weight:400;color:var(--muted)"></span></div>
+        <div id="historyTable"><div class="empty-state"><div class="es-icon">📋</div><p>No donations yet.</p></div></div>
+      </div>
+    </div>
+
+    <!-- WISHLIST -->
+    <div class="page-section" id="wishlistSection">
+      <div class="page-header">
+        <h1>Wishlist</h1>
+        <p>Campaigns you've saved to support later.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Saved Campaigns</div>
+        <div id="wishlistGrid"><div class="empty-state"><div class="es-icon">❤️</div><p>No saved campaigns yet. Browse on the <a href="index.html#campaigns" style="color:var(--forest-mid);font-weight:600">main site</a>.</p></div></div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="page-section" id="profileSection">
+      <div class="page-header">
+        <h1>My Profile</h1>
+        <p>Update your account details.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Account Details</div>
+        <div class="alert alert-success" id="profileSuccess">Profile updated!</div>
+        <div class="alert alert-error"   id="profileError"></div>
+        <div class="form-row">
+          <div class="form-group"><label>Full Name</label><input type="text" id="pName" placeholder="Your name" /></div>
+          <div class="form-group"><label>Phone</label><input type="tel" id="pPhone" placeholder="+91 98765 43210" /></div>
+        </div>
+        <div class="form-group"><label>Email (read-only)</label><input type="email" id="pEmail" readonly /></div>
+        <button class="btn btn-primary" id="saveProfileBtn" onclick="saveProfile()"><span>Save Changes</span></button>
+      </div>
+    </div>
+  </main>
+
+<script src="config.js"></script>
+<script>
+    const token = localStorage.getItem('donor_token');
+    if (!token) window.location.href = 'donor-login.html';
+
+    let donorData = null, donationsData = [];
+
+    async function init() {
+      document.getElementById('sidebarName').textContent  = localStorage.getItem('donor_name')  || '—';
+      document.getElementById('sidebarEmail').textContent = localStorage.getItem('donor_email') || '—';
+      await loadProfile();
+      document.getElementById('loadingSpinner').style.display = 'none';
+      showSection('overview');
+    }
+
+    async function loadProfile() {
+      try {
+        const res = await fetch(`${API}/api/donor/profile`, { headers: { Authorization: `Bearer ${token}` } });
+        if (res.status === 401) { logout(); return; }
+        const data = await res.json();
+        if (data.success) { donorData = data.data; donationsData = data.donations || []; populateAll(); }
+      } catch(e) { console.error('Failed to load profile:', e); }
+    }
+
+    function populateAll() {
+      if (!donorData) return;
+      document.getElementById('welcomeTitle').textContent = `Welcome back, ${donorData.name}!`;
+      document.getElementById('sidebarName').textContent  = donorData.name;
+      document.getElementById('pName').value  = donorData.name  || '';
+      document.getElementById('pPhone').value = donorData.phone || '';
+      document.getElementById('pEmail').value = donorData.email || '';
+      const total = donationsData.reduce((s, d) => s + d.amount, 0);
+      document.getElementById('statTotal').textContent    = '₹' + total.toLocaleString('en-IN');
+      document.getElementById('statCount').textContent    = donationsData.length;
+      document.getElementById('statWishlist').textContent = (donorData.wishlist || []).length;
+      document.getElementById('historyCount').textContent = donationsData.length ? `(${donationsData.length})` : '';
+      renderRecentDonations(); renderHistoryTable(); renderWishlist();
+    }
+
+    function renderRecentDonations() {
+      const el = document.getElementById('recentDonations');
+      const recent = donationsData.slice(0, 5);
+      if (!recent.length) { el.innerHTML = `<div class="empty-state"><div class="es-icon">💚</div><p>No donations yet. <a href="index.html#donate" style="color:var(--forest-mid);font-weight:600">Make your first donation</a></p></div>`; return; }
+      el.innerHTML = buildTable(recent, false);
+    }
+
+    function renderHistoryTable() {
+      const el = document.getElementById('historyTable');
+      if (!donationsData.length) { el.innerHTML = `<div class="empty-state"><div class="es-icon">📋</div><p>No donations yet.</p></div>`; return; }
+      el.innerHTML = buildTable(donationsData, true);
+    }
+
+    function buildTable(list, showPrint) {
+      return `<table class="don-table">
+        <thead><tr><th>Date</th><th>Campaign</th><th>Amount</th><th>Type</th>${showPrint ? '<th>Receipt</th>' : ''}</tr></thead>
+        <tbody>${list.map(d => {
+          const date = new Date(d.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+          const freq = d.frequency || 'once';
+          return `<tr>
+            <td>${date}</td>
+            <td>${d.campaign || 'General Fund'}</td>
+            <td style="font-weight:600">₹${Number(d.amount).toLocaleString('en-IN')}</td>
+            <td><span class="badge badge-${freq}">${freq.charAt(0).toUpperCase() + freq.slice(1)}</span></td>
+            ${showPrint ? `<td><button class="btn btn-ghost btn-sm" onclick="printReceipt('${d._id}')">🖨️ Print</button></td>` : ''}
+          </tr>`;
+        }).join('')}</tbody>
+      </table>`;
+    }
+
+    function renderWishlist() {
+      const el = document.getElementById('wishlistGrid');
+      const list = donorData?.wishlist || [];
+      if (!list.length) { el.innerHTML = `<div class="empty-state"><div class="es-icon">❤️</div><p>No saved campaigns yet. Browse on the <a href="index.html#campaigns" style="color:var(--forest-mid);font-weight:600">main site</a>.</p></div>`; return; }
+      el.innerHTML = `<div class="wishlist-grid">${list.map(c => `
+        <div class="wish-card">
+          <div class="wish-card-name">📣 ${c}</div>
+          <div class="wish-card-actions">
+            <a href="index.html#campaigns" class="btn btn-primary btn-sm">Donate</a>
+            <button class="btn btn-danger btn-sm" onclick="removeWishlist('${c.replace(/'/g,"\\'")}')">Remove</button>
+          </div>
+        </div>`).join('')}</div>`;
+    }
+
+    async function removeWishlist(campaign) {
+      try {
+        const res  = await fetch(`${API}/api/donor/wishlist`, { method: 'DELETE', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ campaign }) });
+        const data = await res.json();
+        if (data.success) { donorData.wishlist = data.wishlist; renderWishlist(); document.getElementById('statWishlist').textContent = data.wishlist.length; }
+      } catch(e) { console.error(e); }
+    }
+
+    function printReceipt(donationId) {
+      const d = donationsData.find(x => x._id === donationId);
+      if (!d) return;
+      const date = new Date(d.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+      const receiptId = 'TN' + d._id.toString().slice(-8).toUpperCase();
+      document.getElementById('certTable').innerHTML = `
+        <tr><td>Receipt ID</td><td><strong>${receiptId}</strong></td></tr>
+        <tr><td>Donor Name</td><td>${donorData.name}</td></tr>
+        <tr><td>Email</td><td>${donorData.email}</td></tr>
+        <tr><td>Date</td><td>${date}</td></tr>
+        <tr><td>Campaign</td><td>${d.campaign || 'General Fund'}</td></tr>
+        <tr><td>Amount</td><td><strong>₹${Number(d.amount).toLocaleString('en-IN')}</strong></td></tr>
+        <tr><td>Frequency</td><td>${d.frequency || 'One-time'}</td></tr>
+        <tr><td>Status</td><td>Completed ✅</td></tr>
+      `;
+      window.print();
+    }
+
+    async function saveProfile() {
+      const name  = document.getElementById('pName').value.trim();
+      const phone = document.getElementById('pPhone').value.trim();
+      if (!name) return showAlert('profileError', 'Name is required.');
+      const btn = document.getElementById('saveProfileBtn');
+      btn.disabled = true; btn.querySelector('span').textContent = 'Saving…';
+      try {
+        const res  = await fetch(`${API}/api/donor/profile`, { method: 'PUT', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ name, phone }) });
+        const data = await res.json();
+        if (data.success) {
+          donorData = data.data;
+          localStorage.setItem('donor_name', donorData.name);
+          document.getElementById('sidebarName').textContent = donorData.name;
+          document.getElementById('welcomeTitle').textContent = `Welcome back, ${donorData.name}!`;
+          showAlert('profileSuccess', 'Profile updated successfully!');
+        } else { showAlert('profileError', data.error || 'Update failed.'); }
+      } catch { showAlert('profileError', 'Could not connect to server.'); }
+      finally { btn.disabled = false; btn.querySelector('span').textContent = 'Save Changes'; }
+    }
+
+    function showSection(name) {
+      document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById(name + 'Section').classList.add('active');
+      const idx = { overview: 0, history: 1, wishlist: 2, profile: 3 };
+      const items = document.querySelectorAll('.nav-item');
+      if (idx[name] !== undefined) items[idx[name]].classList.add('active');
+    }
+
+    function showAlert(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg; el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 4000);
+    }
+
+    function logout() {
+      ['donor_token','donor_name','donor_email'].forEach(k => localStorage.removeItem(k));
+      window.location.href = 'donor-login.html';
+    }
+
+    init();
+  </script>
+</body>
+</html>

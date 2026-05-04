@@ -1,0 +1,6 @@
+ngo-backend/node_modules/
+ngo-backend/.env
+ngo-backend/uploads/
+*.log
+.DS_Store
+Thumbs.db

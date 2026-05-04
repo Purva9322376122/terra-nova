@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Donor Leaderboard — Terra Nova</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--forest:#1a3a2e;--forest-mid:#2d6a4f;--forest-lt:#52b788;--gold:#d4a853;--gold-lt:#e8c57a;--ivory:#f5f0e8;--ivory-dk:#ede6d8;--ivory-mid:#d9d0bc;--muted:#5a7365;--white:#ffffff;--radius:10px}
+  body{font-family:'DM Sans',sans-serif;background:var(--ivory);color:var(--forest);min-height:100vh}
+
+  /* NAV */
+  nav{background:var(--forest);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+  .nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ivory);font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700}
+  .nav-logo svg{width:20px;height:26px;color:var(--forest-lt)}
+  .nav-right{display:flex;align-items:center;gap:12px}
+  .nav-link{color:rgba(245,240,232,0.65);font-size:0.85rem;text-decoration:none;transition:color .2s}
+  .nav-link:hover{color:var(--ivory)}
+  .btn-nav{background:var(--gold);color:var(--forest);padding:7px 18px;border-radius:100px;font-size:0.85rem;font-weight:700;text-decoration:none}
+
+  /* HERO */
+  .hero{background:linear-gradient(135deg,var(--forest) 0%,var(--forest-mid) 60%,#3a8a6a 100%);padding:72px 32px 56px;text-align:center;position:relative;overflow:hidden}
+  .hero::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:40px 40px}
+  .hero-inner{position:relative;z-index:1}
+  .hero-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(212,168,83,0.15);border:1px solid rgba(212,168,83,0.3);color:var(--gold-lt);font-size:0.74rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:5px 14px;border-radius:100px;margin-bottom:20px}
+  .hero-badge span{width:5px;height:5px;background:var(--gold-lt);border-radius:50%;display:inline-block}
+  .hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);font-weight:700;color:var(--ivory);line-height:1.15;margin-bottom:12px}
+  .hero h1 em{font-style:italic;color:var(--gold-lt)}
+  .hero p{color:rgba(245,240,232,0.65);font-size:0.95rem;max-width:460px;margin:0 auto 36px}
+  .hero-stats{display:flex;justify-content:center;gap:40px;flex-wrap:wrap}
+  .hs-num{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--gold-lt)}
+  .hs-label{font-size:0.72rem;color:rgba(245,240,232,0.5);text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+
+  /* PODIUM */
+  .podium-section{max-width:680px;margin:0 auto;padding:48px 24px 32px}
+  .podium{display:flex;align-items:flex-end;justify-content:center;gap:16px}
+  .pod{display:flex;flex-direction:column;align-items:center;flex:1;max-width:180px}
+  .pod-medal{font-size:1.6rem;margin-bottom:6px}
+  .pod-avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--ivory);margin-bottom:8px}
+  .pod-1 .pod-avatar{width:68px;height:68px;font-size:1.2rem;background:linear-gradient(135deg,var(--gold),var(--gold-lt));color:var(--forest);box-shadow:0 0 0 4px rgba(212,168,83,0.25),0 8px 24px rgba(212,168,83,0.2)}
+  .pod-2 .pod-avatar{width:56px;height:56px;font-size:1rem;background:linear-gradient(135deg,#9ca3af,#d1d5db);color:var(--forest)}
+  .pod-3 .pod-avatar{width:52px;height:52px;font-size:0.95rem;background:linear-gradient(135deg,#b45309,#d97706);color:#fff}
+  .pod-name{font-size:0.85rem;font-weight:600;color:var(--forest);text-align:center;margin-bottom:2px}
+  .pod-amount{font-size:0.8rem;color:var(--forest-mid);font-weight:700}
+  .pod-count{font-size:0.68rem;color:var(--muted);margin-top:1px;margin-bottom:8px}
+  .pod-base{width:100%;border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700}
+  .pod-1 .pod-base{background:linear-gradient(135deg,var(--gold),var(--gold-lt));color:var(--forest);height:80px}
+  .pod-2 .pod-base{background:linear-gradient(135deg,#6b7280,#9ca3af);color:#fff;height:60px}
+  .pod-3 .pod-base{background:linear-gradient(135deg,#92400e,#b45309);color:#fff;height:44px}
+
+  /* LIST */
+  .list-wrap{max-width:680px;margin:0 auto;padding:0 24px 48px}
+  .list-card{background:var(--white);border:1px solid var(--ivory-mid);border-radius:14px;overflow:hidden;margin-bottom:24px}
+  .list-card-title{padding:18px 24px;border-bottom:1px solid var(--ivory-dk);font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--forest);display:flex;align-items:center;justify-content:space-between}
+  .list-row{display:flex;align-items:center;gap:14px;padding:13px 24px;border-bottom:1px solid var(--ivory-dk);transition:background .15s}
+  .list-row:last-child{border-bottom:none}
+  .list-row:hover{background:var(--ivory)}
+  .lr-rank{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;background:var(--ivory-dk);color:var(--muted);flex-shrink:0}
+  .lr-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;flex-shrink:0;color:var(--ivory)}
+  .lr-info{flex:1}
+  .lr-name{font-size:0.88rem;font-weight:600;color:var(--forest)}
+  .lr-sub{font-size:0.7rem;color:var(--muted);margin-top:1px}
+  .lr-bar-wrap{width:80px;flex-shrink:0}
+  .lr-bar{height:4px;background:var(--ivory-dk);border-radius:100px;overflow:hidden}
+  .lr-fill{height:100%;background:linear-gradient(90deg,var(--forest-mid),var(--forest-lt));border-radius:100px}
+  .lr-amount{font-size:0.92rem;font-weight:700;color:var(--forest-mid);text-align:right;min-width:80px}
+
+  /* CTA */
+  .cta{text-align:center;padding:0 24px 60px}
+  .cta p{color:var(--muted);font-size:0.85rem;margin-bottom:16px}
+  .cta a{display:inline-flex;align-items:center;gap:8px;background:var(--forest);color:var(--ivory);padding:13px 32px;border-radius:100px;text-decoration:none;font-weight:700;font-size:0.9rem;transition:background .2s}
+  .cta a:hover{background:var(--forest-mid)}
+
+  .spinner{width:36px;height:36px;border:3px solid var(--ivory-dk);border-top-color:var(--forest-mid);border-radius:50%;animation:spin .7s linear infinite;margin:80px auto}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .empty-state{text-align:center;padding:80px 20px;color:var(--muted)}
+  .empty-state .ei{font-size:3rem;margin-bottom:12px}
+  .empty-state h3{font-size:1rem;font-weight:600;color:var(--forest);margin-bottom:6px}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <svg viewBox="0 0 32 42" fill="none"><path d="M16 40 C16 40 2 30 2 16 C2 8 8 2 16 2 C24 2 30 8 30 16 C30 30 16 40 16 40Z" fill="currentColor"/><line x1="16" y1="40" x2="16" y2="10" stroke="#1a3a2e" stroke-width="1.2"/></svg>
+    Terra Nova
+  </a>
+  <div class="nav-right">
+    <a href="index.html" class="nav-link">← Back to main site</a>
+    <a href="donor-dashboard.html" class="btn-nav" id="dashBtn">My Dashboard</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge"><span></span>Hall of Generosity</div>
+    <h1>Donor<br/><em>Leaderboard</em></h1>
+    <p>Celebrating the champions who are changing lives and restoring our planet.</p>
+    <div class="hero-stats">
+      <div><div class="hs-num" id="totalDonors">—</div><div class="hs-label">Donors</div></div>
+      <div><div class="hs-num" id="totalRaised">—</div><div class="hs-label">Total Raised</div></div>
+      <div><div class="hs-num" id="totalDonations">—</div><div class="hs-label">Donations</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="loadingSpinner"><div class="spinner"></div></div>
+<div id="emptyState" style="display:none" class="empty-state"><div class="ei">🏆</div><h3>No donations yet</h3><p>Be the first to make a donation!</p></div>
+
+<div id="mainContent" style="display:none">
+  <div class="podium-section">
+    <div class="podium" id="podium"></div>
+  </div>
+  <div class="list-wrap">
+    <div class="list-card" id="listCard" style="display:none">
+      <div class="list-card-title">All Donors <span id="listCount" style="font-size:0.78rem;font-weight:400;color:var(--muted)"></span></div>
+      <div id="listRows"></div>
+    </div>
+    <div class="cta">
+      <p>Want to see your name here?</p>
+      <a href="index.html#donate">💚 Make a Donation Today</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  var colors=['linear-gradient(135deg,#1a3a2e,#52b788)','linear-gradient(135deg,#1b4f72,#2e86c1)','linear-gradient(135deg,#4a1942,#8e44ad)','linear-gradient(135deg,#7b1e1e,#c0392b)','linear-gradient(135deg,#0d4f3a,#1a8c6c)','linear-gradient(135deg,#0a2e3d,#117a8b)'];
+
+  if (!localStorage.getItem('donor_token')) {
+    document.getElementById('dashBtn').textContent = 'Donor Login';
+    document.getElementById('dashBtn').href = 'donor-login.html';
+  }
+
+  var API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:5001' : 'https://terra-nova-backend.onrender.com';
+  fetch(API + '/api/leaderboard')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      document.getElementById('loadingSpinner').style.display='none';
+      if(!d.success||!d.data.length){document.getElementById('emptyState').style.display='block';return;}
+      var data=d.data;
+      var totalRaised=data.reduce(function(s,x){return s+x.total;},0);
+      var totalDons=data.reduce(function(s,x){return s+x.count;},0);
+      document.getElementById('totalDonors').textContent=data.length;
+      document.getElementById('totalRaised').textContent='₹'+(totalRaised>=1000?(totalRaised/1000).toFixed(0)+'K':totalRaised);
+      document.getElementById('totalDonations').textContent=totalDons;
+
+      // PODIUM
+      var top=data.slice(0,Math.min(3,data.length));
+      var order=top.length>=3?[top[1],top[0],top[2]]:top.length===2?[top[1],top[0]]:[top[0]];
+      var cls=top.length>=3?['pod-2','pod-1','pod-3']:top.length===2?['pod-2','pod-1']:['pod-1'];
+      var medals=['🥈','🥇','🥉'];
+      var ranks=[2,1,3];
+      var ph='';
+      for(var i=0;i<order.length;i++){
+        var p=order[i];
+        var ini=p.name.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase();
+        ph+='<div class="pod '+cls[i]+'">' +
+          '<div class="pod-medal">'+(top.length>=3?medals[i]:i===0?'🥈':'🥇')+'</div>' +
+          '<div class="pod-avatar">'+ini+'</div>' +
+          '<div class="pod-name">'+p.name+'</div>' +
+          '<div class="pod-amount">₹'+Number(p.total).toLocaleString('en-IN')+'</div>' +
+          '<div class="pod-count">'+p.count+' donation'+(p.count!==1?'s':'')+'</div>' +
+          '<div class="pod-base">#'+(top.length>=3?ranks[i]:i===0?2:1)+'</div>' +
+        '</div>';
+      }
+      document.getElementById('podium').innerHTML=ph;
+
+      // REST
+      if(data.length>3){
+        document.getElementById('listCard').style.display='block';
+        document.getElementById('listCount').textContent='('+data.length+' total)';
+        var maxT=data[0].total;
+        var lh='';
+        for(var j=3;j<data.length;j++){
+          var x=data[j];
+          var ini2=x.name.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase();
+          var pct=Math.round((x.total/maxT)*100);
+          lh+='<div class="list-row">' +
+            '<div class="lr-rank">'+(j+1)+'</div>' +
+            '<div class="lr-avatar" style="background:'+colors[j%colors.length]+'">'+ini2+'</div>' +
+            '<div class="lr-info"><div class="lr-name">'+x.name+'</div><div class="lr-sub">'+x.count+' donation'+(x.count!==1?'s':'')+'</div></div>' +
+            '<div class="lr-bar-wrap"><div class="lr-bar"><div class="lr-fill" style="width:'+pct+'%"></div></div></div>' +
+            '<div class="lr-amount">₹'+Number(x.total).toLocaleString('en-IN')+'</div>' +
+          '</div>';
+        }
+        document.getElementById('listRows').innerHTML=lh;
+      }
+      document.getElementById('mainContent').style.display='block';
+    })
+    .catch(function(){
+      document.getElementById('loadingSpinner').style.display='none';
+      document.getElementById('emptyState').style.display='block';
+    });
+</script>
+</body>
+</html>

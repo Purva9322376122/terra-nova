@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NGO Dashboard — Terra Nova</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --forest:      #1a3a2e;
+      --forest-mid:  #2d6a4f;
+      --forest-lt:   #52b788;
+      --gold:        #d4a853;
+      --gold-lt:     #e8c57a;
+      --ivory:       #f5f0e8;
+      --ivory-dk:    #ede6d8;
+      --ivory-mid:   #d9d0bc;
+      --muted:       #5a7365;
+      --white:       #ffffff;
+      --red:         #c0392b;
+      --red-lt:      rgba(192,57,43,0.08);
+      --radius:      10px;
+      --sidebar-w:   240px;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--ivory);
+      min-height: 100vh;
+      display: flex;
+      color: var(--forest);
+    }
+
+    /* ── SIDEBAR ─────────────────────────────────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--forest);
+      min-height: 100vh;
+      position: fixed;
+      top: 0; left: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+    }
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 22px 20px;
+      text-decoration: none;
+      color: var(--ivory);
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .sidebar-logo svg { width: 20px; height: 26px; color: var(--forest-lt); }
+    .sidebar-ngo-info {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .sni-label { font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: rgba(245,240,232,0.4); margin-bottom: 4px; }
+    .sni-name { font-size: 0.88rem; font-weight: 600; color: var(--ivory); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sni-email { font-size: 0.72rem; color: rgba(245,240,232,0.45); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .sidebar-nav { flex: 1; padding: 12px 10px; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: rgba(245,240,232,0.55);
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-bottom: 2px;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      text-decoration: none;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: var(--ivory); }
+    .nav-item.active { background: rgba(82,183,136,0.15); color: var(--forest-lt); }
+    .nav-item-icon { font-size: 1rem; width: 20px; text-align: center; }
+
+    .sidebar-footer {
+      padding: 12px 10px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .btn-logout {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 9px 12px;
+      background: rgba(192,57,43,0.15);
+      border: 1px solid rgba(192,57,43,0.2);
+      border-radius: var(--radius);
+      color: #e88080;
+      font-size: 0.82rem;
+      font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-logout:hover { background: rgba(192,57,43,0.25); }
+    
+  
+    /* ── MAIN CONTENT ────────────────────────────── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      padding: 32px;
+      max-width: calc(100vw - var(--sidebar-w));
+    }
+
+    /* ── Page sections ───────────────────────────── */
+    .page-section { display: none; }
+    .page-section.active { display: block; }
+
+    /* ── Page header ─────────────────────────────── */
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--forest);
+    }
+    .page-header p { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+
+    /* ── Stat cards ──────────────────────────────── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--white);
+      border: 1px solid var(--ivory-mid);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .sc-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+    .sc-num { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--forest); line-height: 1; }
+    .sc-sub { font-size: 0.72rem; color: var(--muted); }
+
+    /* ── Cards & panels ──────────────────────────── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--ivory-mid);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--forest);
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--ivory-dk);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* ── Form elements (shared) ──────────────────── */
+    .form-group { margin-bottom: 14px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+    label { display: block; font-size: 0.76rem; font-weight: 600; color: var(--forest); margin-bottom: 5px; letter-spacing: 0.01em; }
+    input, select, textarea {
+      width: 100%;
+      padding: 9px 12px;
+      font-size: 0.85rem;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--forest);
+      background: var(--ivory);
+      border: 1.5px solid var(--ivory-mid);
+      border-radius: var(--radius);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--forest-mid);
+      box-shadow: 0 0 0 3px rgba(45,106,79,0.1);
+      background: var(--white);
+    }
+    textarea { resize: vertical; min-height: 80px; }
+
+    /* ── Buttons ──────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 18px;
+      font-size: 0.83rem;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      border-radius: var(--radius);
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+    }
+    .btn-primary { background: var(--forest); color: var(--ivory); }
+    .btn-primary:hover { background: var(--forest-mid); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-sm { padding: 6px 13px; font-size: 0.78rem; }
+    .btn-danger { background: var(--red-lt); color: var(--red); border: 1px solid rgba(192,57,43,0.2); }
+    .btn-danger:hover { background: rgba(192,57,43,0.15); }
+    .btn-ghost { background: var(--ivory-dk); color: var(--forest); border: 1px solid var(--ivory-mid); }
+    .btn-ghost:hover { background: var(--ivory-mid); }
+
+    /* ── Alert ───────────────────────────────────── */
+    .alert {
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      font-size: 0.82rem;
+      font-weight: 500;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .alert.show { display: block; }
+    .alert-success { background: rgba(82,183,136,0.1); border: 1px solid rgba(82,183,136,0.25); color: var(--forest-mid); }
+    .alert-error   { background: var(--red-lt); border: 1px solid rgba(192,57,43,0.2); color: var(--red); }
+
+    /* ── Campaign table ──────────────────────────── */
+    .campaign-table { width: 100%; border-collapse: collapse; }
+    .campaign-table th {
+      text-align: left;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      padding: 0 12px 10px;
+      border-bottom: 1px solid var(--ivory-dk);
+    }
+    .campaign-table td {
+      padding: 12px;
+      font-size: 0.83rem;
+      color: var(--forest);
+      border-bottom: 1px solid var(--ivory-dk);
+      vertical-align: middle;
+    }
+    .campaign-table tr:last-child td { border-bottom: none; }
+    .campaign-table tr:hover td { background: var(--ivory); }
+
+    .ct-progress-bar { width: 80px; height: 5px; background: var(--ivory-dk); border-radius: 100px; overflow: hidden; margin-bottom: 3px; }
+    .ct-progress-fill { height: 100%; background: linear-gradient(90deg, var(--forest-mid), var(--forest-lt)); border-radius: 100px; }
+    .ct-pct { font-size: 0.7rem; color: var(--muted); }
+
+    .urgency-badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 100px;
+    }
+    .urgency-badge.urgent     { background: rgba(255,200,0,0.15); color: #b8860b; border: 1px solid rgba(255,200,0,0.3); }
+    .urgency-badge.almost     { background: rgba(0,150,200,0.1);  color: #0a5f7a; border: 1px solid rgba(0,150,200,0.2); }
+    .urgency-badge.needs-help { background: rgba(100,60,180,0.1); color: #4a2a8c; border: 1px solid rgba(100,60,180,0.2); }
+    .urgency-badge.active     { background: rgba(82,183,136,0.1); color: var(--forest-mid); border: 1px solid rgba(82,183,136,0.2); }
+
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 0.88rem; }
+    .empty-state .es-icon { font-size: 2.5rem; margin-bottom: 12px; }
+
+    /* ── Modal ───────────────────────────────────── */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10,20,15,0.5);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 28px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    }
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--forest);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--ivory-dk);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px;
+      line-height: 1;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--ivory-dk);
+    }
+
+    /* ── Loading spinner ─────────────────────────── */
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--ivory-dk);
+      border-top-color: var(--forest-mid);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 40px auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 900px) {
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .form-row-3 { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .sidebar { width: 100%; min-height: auto; position: relative; flex-direction: row; flex-wrap: wrap; }
+      .main { margin-left: 0; padding: 20px; max-width: 100%; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-logo">
+      <svg viewBox="0 0 32 42" fill="none">
+        <path d="M16 40 C16 40 2 30 2 16 C2 8 8 2 16 2 C24 2 30 8 30 16 C30 30 16 40 16 40Z" fill="currentColor"/>
+        <line x1="16" y1="40" x2="16" y2="10" stroke="#1a3a2e" stroke-width="1.2"/>
+      </svg>
+      Terra Nova
+    </a>
+    <div class="sidebar-ngo-info">
+      <div class="sni-label">Logged in as</div>
+      <div class="sni-name" id="sidebarName">—</div>
+      <div class="sni-email" id="sidebarEmail">—</div>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" onclick="showSection('overview')">
+        <span class="nav-item-icon">📊</span> Overview
+      </button>
+      <button class="nav-item" onclick="showSection('profile')">
+        <span class="nav-item-icon">🏛️</span> My Profile
+      </button>
+      <button class="nav-item" onclick="showSection('campaigns')">
+        <span class="nav-item-icon">📣</span> Campaigns
+      </button>
+      <button class="nav-item" onclick="showSection('donations')">
+        <span class="nav-item-icon">💚</span> Donations
+      </button>
+      <a href="index.html" class="nav-item">
+        <span class="nav-item-icon">🌐</span> Public Site
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="logout()">🚪 Sign Out</button>
+   
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- Loading -->
+    <div id="loadingSpinner"><div class="spinner"></div></div>
+
+    <!-- ── OVERVIEW ── -->
+    <div class="page-section" id="overviewSection">
+      <div class="page-header">
+        <h1 id="welcomeTitle">Welcome back!</h1>
+        <p>Here's a snapshot of your NGO's activity.</p>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="sc-label">Campaigns</div>
+          <div class="sc-num" id="statCampaigns">0</div>
+          <div class="sc-sub">Total campaigns</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-label">Total Goal</div>
+          <div class="sc-num" id="statGoal">₹0</div>
+          <div class="sc-sub">Across all campaigns</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-label">Total Raised</div>
+          <div class="sc-num" id="statRaised">₹0</div>
+          <div class="sc-sub">Funds raised</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-label">Volunteers Needed</div>
+          <div class="sc-num" id="statVolunteers">0</div>
+          <div class="sc-sub">Open positions</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Recent Campaigns</div>
+        <div id="overviewCampaigns"><div class="empty-state"><div class="es-icon">📣</div><p>No campaigns yet. <button class="btn btn-primary btn-sm" onclick="showSection('campaigns')" style="margin-top:10px">Add your first campaign</button></p></div></div>
+      </div>
+    </div>
+
+    <!-- ── PROFILE ── -->
+    <div class="page-section" id="profileSection">
+      <div class="page-header">
+        <h1>My Profile</h1>
+        <p>Update your organisation's public information.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Organisation Details</div>
+        <div class="alert alert-success" id="profileSuccess">Profile updated successfully!</div>
+        <div class="alert alert-error"   id="profileError"></div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Organisation Name *</label>
+            <input type="text" id="pName" placeholder="Your NGO name" />
+          </div>
+          <div class="form-group">
+            <label>Focus Area</label>
+            <select id="pCategory">
+              <option value="environment">Environment</option>
+              <option value="water">Water</option>
+              <option value="education">Education</option>
+              <option value="health">Health</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Mission Statement</label>
+          <textarea id="pMission" placeholder="Describe your NGO's mission and goals..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Location</label>
+            <input type="text" id="pLocation" placeholder="City, Country" />
+          </div>
+          <div class="form-group">
+            <label>Founded Year</label>
+            <input type="text" id="pFounded" placeholder="e.g. 2010" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" id="pPhone" placeholder="+91 98765 43210" />
+          </div>
+          <div class="form-group">
+            <label>Website</label>
+            <input type="url" id="pWebsite" placeholder="https://yourngo.org" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email (read-only)</label>
+          <input type="email" id="pEmail" readonly style="opacity:0.6;cursor:not-allowed;" />
+        </div>
+        <button class="btn btn-primary" id="saveProfileBtn" onclick="saveProfile()">
+          <span>Save Changes</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── CAMPAIGNS ── -->
+    <div class="page-section" id="campaignsSection">
+      <div class="page-header">
+        <h1>Campaigns</h1>
+        <p>Create and manage your NGO's campaigns.</p>
+      </div>
+
+      <div class="alert alert-success" id="campSuccess"></div>
+      <div class="alert alert-error"   id="campError"></div>
+
+      <div class="card">
+        <div class="card-title">
+          All Campaigns
+          <button class="btn btn-primary btn-sm" onclick="openCampaignModal()">+ Add Campaign</button>
+        </div>
+        <div id="campaignTableWrap">
+          <div class="empty-state"><div class="es-icon">📣</div><p>No campaigns yet. Click "Add Campaign" to get started.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DONATIONS ── -->
+    <div class="page-section" id="donationsSection">
+      <div class="page-header">
+        <h1>Campaign Donations</h1>
+        <p>All donations received for your campaigns.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Donation History <span id="ngoDonationTotal" style="font-size:0.8rem;font-weight:400;color:var(--muted)"></span></div>
+        <div id="ngoDonationsTable"><div class="empty-state"><div class="es-icon">💚</div><p>No donations yet.</p></div></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ── CAMPAIGN MODAL ── -->
+  <div class="modal-backdrop" id="campaignModal">
+    <div class="modal">
+      <div class="modal-title">
+        <span id="modalTitle">Add Campaign</span>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="alert alert-error" id="modalError"></div>
+
+      <input type="hidden" id="modalCampaignId" />
+      <div class="form-group">
+        <label>Campaign Title *</label>
+        <input type="text" id="mTitle" placeholder="e.g. Plant 1 Million Trees" />
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="mDescription" placeholder="What is this campaign about?"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category</label>
+          <select id="mCategory">
+            <option value="environment">Environment</option>
+            <option value="water">Water</option>
+            <option value="education">Education</option>
+            <option value="health">Health</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Urgency Tag</label>
+          <select id="mUrgency">
+            <option value="active">Active</option>
+            <option value="urgent">🔥 Urgent</option>
+            <option value="almost">⚡ Almost Done</option>
+            <option value="needs-help">🌟 Needs Help</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Funding Goal (₹)</label>
+          <input type="number" id="mGoal" placeholder="500000" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Amount Raised (₹)</label>
+          <input type="number" id="mRaised" placeholder="0" min="0" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Volunteers Needed</label>
+          <input type="number" id="mVolunteers" placeholder="50" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Days Left</label>
+          <input type="number" id="mDaysLeft" placeholder="30" min="1" />
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" id="modalSaveBtn" onclick="saveCampaign()">
+          <span>Save Campaign</span>
+        </button>
+      </div>
+
+      <!-- Image upload — shown after campaign is saved -->
+      <div id="imageUploadWrap" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--ivory-dk)">
+        <label style="font-size:0.76rem;font-weight:600;color:var(--forest);display:block;margin-bottom:8px">📷 Campaign Image (optional)</label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="file" id="campaignImageInput" accept="image/*" style="flex:1;font-size:0.82rem" onchange="previewImage(this)"/>
+          <button class="btn btn-ghost btn-sm" onclick="uploadCampaignImage()" id="uploadImgBtn">Upload</button>
+        </div>
+        <div id="imagePreview" style="margin-top:10px;display:none">
+          <img id="previewImg" style="width:100%;max-height:160px;object-fit:cover;border-radius:8px;border:1px solid var(--ivory-mid)" />
+        </div>
+        <div id="uploadMsg" style="font-size:0.78rem;margin-top:6px"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+
+    // ── Auth guard ───────────────────────────────────────────
+    const token = localStorage.getItem('ngo_token');
+    if (!token) window.location.href = 'ngo-login.html';
+
+    let ngoData = null;
+
+    // ── Init ─────────────────────────────────────────────────
+    async function init() {
+      document.getElementById('sidebarName').textContent  = localStorage.getItem('ngo_name')  || '—';
+      document.getElementById('sidebarEmail').textContent = localStorage.getItem('ngo_email') || '—';
+      await loadProfile();
+      showSection('overview');
+      document.getElementById('loadingSpinner').style.display = 'none';
+    }
+
+    // ── Load profile from backend ────────────────────────────
+    async function loadProfile() {
+      try {
+        const res  = await fetch(`${API}/api/ngo/profile`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        if (res.status === 401) { logout(); return; }
+        if (data.success) {
+          ngoData = data.data;
+          populateProfile();
+          updateOverviewStats();
+          renderCampaignTable();
+          renderOverviewCampaigns();
+        }
+      } catch(e) {
+        console.error('Failed to load profile:', e);
+      }
+    }
+
+    function populateProfile() {
+      if (!ngoData) return;
+      document.getElementById('pName').value     = ngoData.name     || '';
+      document.getElementById('pMission').value  = ngoData.mission  || '';
+      document.getElementById('pLocation').value = ngoData.location || '';
+      document.getElementById('pFounded').value  = ngoData.founded  || '';
+      document.getElementById('pPhone').value    = ngoData.phone    || '';
+      document.getElementById('pWebsite').value  = ngoData.website  || '';
+      document.getElementById('pEmail').value    = ngoData.email    || '';
+      document.getElementById('pCategory').value = ngoData.category || 'environment';
+      document.getElementById('welcomeTitle').textContent = `Welcome back, ${ngoData.name}!`;
+      document.getElementById('sidebarName').textContent  = ngoData.name;
+    }
+
+    function updateOverviewStats() {
+      if (!ngoData) return;
+      const campaigns = ngoData.campaigns || [];
+      const totalGoal      = campaigns.reduce((s, c) => s + (c.goal || 0), 0);
+      const totalRaised    = campaigns.reduce((s, c) => s + (c.raised || 0), 0);
+      const totalVols      = campaigns.reduce((s, c) => s + (c.volunteers || 0), 0);
+      document.getElementById('statCampaigns').textContent  = campaigns.length;
+      document.getElementById('statGoal').textContent       = '₹' + totalGoal.toLocaleString('en-IN');
+      document.getElementById('statRaised').textContent     = '₹' + totalRaised.toLocaleString('en-IN');
+      document.getElementById('statVolunteers').textContent = totalVols;
+    }
+
+    function renderOverviewCampaigns() {
+      const campaigns = (ngoData?.campaigns || []).slice(0, 4);
+      const el = document.getElementById('overviewCampaigns');
+      if (!campaigns.length) {
+        el.innerHTML = `<div class="empty-state"><div class="es-icon">📣</div><p>No campaigns yet.<br/><button class="btn btn-primary btn-sm" onclick="showSection('campaigns')" style="margin-top:10px">Add your first campaign</button></p></div>`;
+        return;
+      }
+      el.innerHTML = `<table class="campaign-table">
+        <thead><tr><th>Campaign</th><th>Category</th><th>Progress</th><th>Urgency</th></tr></thead>
+        <tbody>${campaigns.map(c => {
+          const pct = c.goal > 0 ? Math.min(100, Math.round((c.raised / c.goal) * 100)) : 0;
+          return `<tr>
+            <td><strong>${c.title}</strong></td>
+            <td>${c.category}</td>
+            <td>
+              <div class="ct-progress-bar"><div class="ct-progress-fill" style="width:${pct}%"></div></div>
+              <div class="ct-pct">${pct}%</div>
+            </td>
+            <td><span class="urgency-badge ${c.urgency}">${urgencyLabel(c.urgency)}</span></td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>`;
+    }
+
+    function renderCampaignTable() {
+      const campaigns = ngoData?.campaigns || [];
+      const el = document.getElementById('campaignTableWrap');
+      if (!campaigns.length) {
+        el.innerHTML = `<div class="empty-state"><div class="es-icon">📣</div><p>No campaigns yet. Click "Add Campaign" to get started.</p></div>`;
+        return;
+      }
+      el.innerHTML = `<table class="campaign-table">
+        <thead><tr><th>Title</th><th>Category</th><th>Goal</th><th>Raised</th><th>Progress</th><th>Urgency</th><th>Actions</th></tr></thead>
+        <tbody>${campaigns.map(c => {
+          const pct = c.goal > 0 ? Math.min(100, Math.round((c.raised / c.goal) * 100)) : 0;
+          return `<tr>
+            <td><strong>${c.title}</strong><br/><span style="font-size:0.72rem;color:var(--muted)">${c.description?.substring(0,50) || ''}${c.description?.length > 50 ? '…' : ''}</span></td>
+            <td>${c.category}</td>
+            <td>₹${(c.goal||0).toLocaleString('en-IN')}</td>
+            <td>₹${(c.raised||0).toLocaleString('en-IN')}</td>
+            <td>
+              <div class="ct-progress-bar"><div class="ct-progress-fill" style="width:${pct}%"></div></div>
+              <div class="ct-pct">${pct}% · ${c.daysLeft || 0}d left</div>
+            </td>
+            <td><span class="urgency-badge ${c.urgency}">${urgencyLabel(c.urgency)}</span></td>
+            <td>
+              <button class="btn btn-ghost btn-sm" onclick="editCampaign('${c._id}')">Edit</button>
+              <button class="btn btn-danger btn-sm" style="margin-top:4px" onclick="deleteCampaign('${c._id}', '${c.title.replace(/'/g,"\\'")}')">Delete</button>
+            </td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>`;
+    }
+
+    function urgencyLabel(u) {
+      const map = { urgent: '🔥 Urgent', almost: '⚡ Almost Done', 'needs-help': '🌟 Needs Help', active: '✅ Active' };
+      return map[u] || u;
+    }
+
+    // ── Section navigation ───────────────────────────────────
+    function showSection(name) {
+      document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById(name + 'Section').classList.add('active');
+      const idx = { overview: 0, profile: 1, campaigns: 2, donations: 3 };
+      const navItems = document.querySelectorAll('.nav-item');
+      if (idx[name] !== undefined) navItems[idx[name]].classList.add('active');
+      if (name === 'donations') loadNgoDonations();
+    }
+
+    async function loadNgoDonations() {
+      const el = document.getElementById('ngoDonationsTable');
+      el.innerHTML = '<div class="spinner"></div>';
+      try {
+        const res  = await fetch(`${API}/api/ngo/donations`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        const list = data.data || [];
+        const total = list.reduce((s,d) => s + d.amount, 0);
+        document.getElementById('ngoDonationTotal').textContent = list.length
+          ? `(${list.length} donations · ₹${total.toLocaleString('en-IN')} total)`
+          : '';
+        if (!list.length) { el.innerHTML = '<div class="empty-state"><div class="es-icon">💚</div><p>No donations received yet.</p></div>'; return; }
+        el.innerHTML = `<table class="campaign-table">
+          <thead><tr><th>Date</th><th>Donor</th><th>Campaign</th><th>Amount</th><th>Type</th></tr></thead>
+          <tbody>${list.map(d => `<tr>
+            <td>${new Date(d.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</td>
+            <td><strong>${d.donorName||'Anonymous'}</strong><br/><span style="font-size:0.72rem;color:var(--muted)">${d.donorEmail||''}</span></td>
+            <td>${d.campaign||'General'}</td>
+            <td style="font-weight:700;color:var(--forest-mid)">₹${Number(d.amount).toLocaleString('en-IN')}</td>
+            <td><span class="urgency-badge active">${d.frequency||'once'}</span></td>
+          </tr>`).join('')}</tbody>
+        </table>`;
+      } catch(e) { el.innerHTML = '<div class="empty-state"><div class="es-icon">⚠️</div><p>Failed to load donations.</p></div>'; }
+    }
+
+    // ── Save profile ─────────────────────────────────────────
+    async function saveProfile() {
+      hideAlerts();
+      const name     = document.getElementById('pName').value.trim();
+      const mission  = document.getElementById('pMission').value.trim();
+      const location = document.getElementById('pLocation').value.trim();
+      const founded  = document.getElementById('pFounded').value.trim();
+      const phone    = document.getElementById('pPhone').value.trim();
+      const website  = document.getElementById('pWebsite').value.trim();
+      const category = document.getElementById('pCategory').value;
+      if (!name) return showAlert('profileError', 'Organisation name is required.');
+
+      const btn = document.getElementById('saveProfileBtn');
+      btn.disabled = true;
+      btn.querySelector('span').textContent = 'Saving...';
+      try {
+        const res  = await fetch(`${API}/api/ngo/profile`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ name, mission, location, founded, phone, website, category })
+        });
+        const data = await res.json();
+        if (data.success) {
+          ngoData = data.data;
+          localStorage.setItem('ngo_name', ngoData.name);
+          document.getElementById('sidebarName').textContent = ngoData.name;
+          document.getElementById('welcomeTitle').textContent = `Welcome back, ${ngoData.name}!`;
+          showAlert('profileSuccess', 'Profile updated successfully!');
+        } else {
+          showAlert('profileError', data.error || 'Update failed.');
+        }
+      } catch { showAlert('profileError', 'Could not connect to server.'); }
+      finally { btn.disabled = false; btn.querySelector('span').textContent = 'Save Changes'; }
+    }
+
+    // ── Campaign modal ───────────────────────────────────────
+    function openCampaignModal(campaignId) {
+      clearModal();
+      if (campaignId) {
+        const c = ngoData.campaigns.find(c => c._id === campaignId);
+        if (!c) return;
+        document.getElementById('modalTitle').textContent      = 'Edit Campaign';
+        document.getElementById('modalCampaignId').value       = c._id;
+        document.getElementById('mTitle').value                = c.title || '';
+        document.getElementById('mDescription').value          = c.description || '';
+        document.getElementById('mCategory').value             = c.category || 'environment';
+        document.getElementById('mUrgency').value              = c.urgency || 'active';
+        document.getElementById('mGoal').value                 = c.goal || '';
+        document.getElementById('mRaised').value               = c.raised || '';
+        document.getElementById('mVolunteers').value           = c.volunteers || '';
+        document.getElementById('mDaysLeft').value             = c.daysLeft || '';
+      } else {
+        document.getElementById('modalTitle').textContent = 'Add Campaign';
+      }
+      document.getElementById('campaignModal').classList.add('open');
+    }
+
+    function editCampaign(id) { openCampaignModal(id); }
+
+    function closeModal() {
+      document.getElementById('campaignModal').classList.remove('open');
+      document.getElementById('imageUploadWrap').style.display = 'none';
+      document.getElementById('imagePreview').style.display = 'none';
+      document.getElementById('uploadMsg').textContent = '';
+    }
+
+    function previewImage(input) {
+      if (!input.files || !input.files[0]) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        document.getElementById('previewImg').src = e.target.result;
+        document.getElementById('imagePreview').style.display = 'block';
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+
+    async function uploadCampaignImage() {
+      const campId = document.getElementById('modalCampaignId').value;
+      const file   = document.getElementById('campaignImageInput').files[0];
+      const msg    = document.getElementById('uploadMsg');
+      if (!campId) { msg.style.color='var(--red)'; msg.textContent='Save the campaign first.'; return; }
+      if (!file)   { msg.style.color='var(--red)'; msg.textContent='Please select an image.'; return; }
+
+      const btn = document.getElementById('uploadImgBtn');
+      btn.disabled = true; btn.textContent = 'Uploading…';
+      msg.style.color='var(--muted)'; msg.textContent='Uploading…';
+
+      const formData = new FormData();
+      formData.append('image', file);
+      try {
+        const res  = await fetch(`${API}/api/ngo/campaigns/${campId}/image`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+          msg.style.color='var(--forest-mid)'; msg.textContent='✅ Image uploaded!';
+          await loadProfile();
+        } else { msg.style.color='var(--red)'; msg.textContent='⚠️ ' + (data.error||'Upload failed.'); }
+      } catch { msg.style.color='var(--red)'; msg.textContent='⚠️ Could not connect to server.'; }
+      finally { btn.disabled = false; btn.textContent = 'Upload'; }
+    }
+
+    function clearModal() {
+      ['modalCampaignId','mTitle','mDescription','mGoal','mRaised','mVolunteers','mDaysLeft'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('mCategory').value = 'environment';
+      document.getElementById('mUrgency').value = 'active';
+      hideAlerts();
+    }
+
+    async function saveCampaign() {
+      const campId = document.getElementById('modalCampaignId').value;
+      const title       = document.getElementById('mTitle').value.trim();
+      const description = document.getElementById('mDescription').value.trim();
+      const category    = document.getElementById('mCategory').value;
+      const urgency     = document.getElementById('mUrgency').value;
+      const goal        = document.getElementById('mGoal').value;
+      const raised      = document.getElementById('mRaised').value;
+      const volunteers  = document.getElementById('mVolunteers').value;
+      const daysLeft    = document.getElementById('mDaysLeft').value;
+
+      if (!title) return showAlert('modalError', 'Campaign title is required.');
+
+      const btn = document.getElementById('modalSaveBtn');
+      btn.disabled = true;
+      btn.querySelector('span').textContent = 'Saving...';
+
+      try {
+        const url = campId
+          ? `${API}/api/ngo/campaigns/${campId}`
+          : `${API}/api/ngo/campaigns`;
+        const method = campId ? 'PUT' : 'POST';
+        const res  = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ title, description, category, urgency, goal, raised, volunteers, daysLeft })
+        });
+        const data = await res.json();
+        if (data.success) {
+          closeModal();
+          await loadProfile();
+          showAlert('campSuccess', campId ? 'Campaign updated!' : 'Campaign added successfully!');
+          // Show image upload section
+          document.getElementById('imageUploadWrap').style.display = 'block';
+        } else {
+          showAlert('modalError', data.error || 'Failed to save campaign.');
+        }
+      } catch { showAlert('modalError', 'Could not connect to server.'); }
+      finally { btn.disabled = false; btn.querySelector('span').textContent = 'Save Campaign'; }
+    }
+
+    async function deleteCampaign(id, title) {
+      if (!confirm(`Delete campaign "${title}"? This cannot be undone.`)) return;
+      try {
+        const res  = await fetch(`${API}/api/ngo/campaigns/${id}`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          await loadProfile();
+          showAlert('campSuccess', 'Campaign deleted.');
+        } else {
+          showAlert('campError', data.error || 'Delete failed.');
+        }
+      } catch { showAlert('campError', 'Could not connect to server.'); }
+    }
+
+    // ── Helpers ──────────────────────────────────────────────
+    function showAlert(id, msg) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 4000);
+    }
+    function hideAlerts() {
+      document.querySelectorAll('.alert').forEach(a => a.classList.remove('show'));
+    }
+
+    // ── Logout ───────────────────────────────────────────────
+    function logout() {
+      localStorage.removeItem('ngo_token');
+      localStorage.removeItem('ngo_name');
+      localStorage.removeItem('ngo_email');
+      window.location.href = 'ngo-login.html';
+    }
+
+    // Close modal on backdrop click
+    document.getElementById('campaignModal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closeModal();
+    });
+
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Terra Nova — System Architecture</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f1a14;
+      color: #e8f5e9;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 26px;
+      font-weight: 700;
+      color: #52b788;
+      margin-bottom: 6px;
+      letter-spacing: 0.04em;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 13px;
+      color: #6b9e7e;
+      margin-bottom: 40px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* ── MAIN GRID ── */
+    .arch-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 140px 1fr 160px;
+      grid-template-rows: auto auto auto;
+      gap: 0;
+      align-items: stretch;
+    }
+
+    /* ── ACTORS COLUMN ── */
+    .actors-col {
+      grid-column: 1;
+      grid-row: 1 / 4;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 14px;
+      padding-right: 10px;
+    }
+
+    .actor-box {
+      background: #1a3a2e;
+      border: 1.5px solid #2d6a4f;
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: #a8d5b5;
+      position: relative;
+      cursor: default;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .actor-box:hover { background: #22503a; border-color: #52b788; }
+    .actor-box .actor-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+
+    /* ── ARROW CONNECTOR ── */
+    .connector-col {
+      grid-column: 1;
+      grid-row: 1 / 4;
+      pointer-events: none;
+    }
+
+    /* ── LAYERS COLUMN ── */
+    .layers-col {
+      grid-column: 2;
+      grid-row: 1 / 4;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 0 16px;
+    }
+
+    /* ── EXTERNAL SERVICES COLUMN ── */
+    .ext-col {
+      grid-column: 3;
+      grid-row: 1 / 4;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+      padding-left: 10px;
+    }
+
+    /* ── LAYER CARDS ── */
+    .layer-card {
+      border-radius: 14px;
+      padding: 20px 22px;
+      position: relative;
+    }
+
+    .layer-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .layer-label .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    /* FRONTEND */
+    .layer-frontend {
+      background: linear-gradient(135deg, #1a3a5c 0%, #1e4976 100%);
+      border: 1.5px solid #2e6da4;
+    }
+    .layer-frontend .layer-label { color: #7ec8f7; }
+    .layer-frontend .layer-label .dot { background: #7ec8f7; }
+
+    /* BACKEND */
+    .layer-backend {
+      background: linear-gradient(135deg, #1a3a2e 0%, #1e4d38 100%);
+      border: 1.5px solid #2d6a4f;
+    }
+    .layer-backend .layer-label { color: #52b788; }
+    .layer-backend .layer-label .dot { background: #52b788; }
+
+    /* DATABASE */
+    .layer-db {
+      background: linear-gradient(135deg, #3a1a5c 0%, #4d1e76 100%);
+      border: 1.5px solid #6a2d9e;
+    }
+    .layer-db .layer-label { color: #c07ef7; }
+    .layer-db .layer-label .dot { background: #c07ef7; }
+
+    /* ── INNER GRID FOR LAYERS ── */
+    .layer-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .layer-inner.three-col { grid-template-columns: 1fr 1fr 1fr; }
+    .layer-inner.four-col  { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+    .module {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .module-title {
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #e8f5e9;
+    }
+    .module ul {
+      list-style: none;
+      padding: 0;
+    }
+    .module ul li {
+      font-size: 10.5px;
+      color: #9ec9b0;
+      padding: 2px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 5px;
+    }
+    .module ul li::before {
+      content: '›';
+      color: #52b788;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* REST API badge */
+    .rest-badge {
+      text-align: center;
+      margin: 4px 0;
+      position: relative;
+    }
+    .rest-badge::before,
+    .rest-badge::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: calc(50% - 60px);
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, #52b788);
+    }
+    .rest-badge::before { left: 0; }
+    .rest-badge::after  { right: 0; background: linear-gradient(90deg, #52b788, transparent); }
+    .rest-badge span {
+      display: inline-block;
+      background: #1a3a2e;
+      border: 1.5px solid #52b788;
+      color: #52b788;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      padding: 3px 14px;
+      border-radius: 20px;
+    }
+
+    /* DB arrow */
+    .db-arrow {
+      text-align: center;
+      margin: 4px 0;
+      position: relative;
+    }
+    .db-arrow::before,
+    .db-arrow::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: calc(50% - 80px);
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, #6a2d9e);
+    }
+    .db-arrow::before { left: 0; }
+    .db-arrow::after  { right: 0; background: linear-gradient(90deg, #6a2d9e, transparent); }
+    .db-arrow span {
+      display: inline-block;
+      background: #1a0a2e;
+      border: 1.5px solid #6a2d9e;
+      color: #c07ef7;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 3px 14px;
+      border-radius: 20px;
+    }
+
+    /* ── EXTERNAL SERVICE CARDS ── */
+    .ext-card {
+      background: #2a1a0a;
+      border: 1.5px solid #8b5e2a;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 11px;
+    }
+    .ext-card .ext-title {
+      font-size: 10px;
+      font-weight: 700;
+      color: #e8c57a;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 5px;
+    }
+    .ext-card .ext-item {
+      color: #c9a96e;
+      font-size: 11px;
+      padding: 2px 0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* ── ACTORS → BROWSER ARROW SVG ── */
+    .arch-svg-row {
+      grid-column: 1 / 4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 8px;
+    }
+
+    /* ── WEB BROWSER BAR ── */
+    .browser-bar {
+      background: #1a2e1a;
+      border: 1.5px solid #2d6a4f;
+      border-radius: 10px;
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .browser-dots { display: flex; gap: 5px; }
+    .browser-dots span {
+      width: 9px; height: 9px; border-radius: 50%;
+    }
+    .browser-dots span:nth-child(1) { background: #e05252; }
+    .browser-dots span:nth-child(2) { background: #e0b852; }
+    .browser-dots span:nth-child(3) { background: #52b788; }
+    .browser-url {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 5px;
+      padding: 3px 10px;
+      font-size: 11px;
+      color: #6b9e7e;
+      font-family: monospace;
+    }
+    .browser-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #52b788;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── DB TABLES ROW ── */
+    .db-tables {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .db-table-chip {
+      background: rgba(192,126,247,0.12);
+      border: 1px solid rgba(192,126,247,0.3);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 10.5px;
+      color: #c07ef7;
+      font-weight: 600;
+    }
+
+    /* ── LEGEND ── */
+    .legend {
+      max-width: 1200px;
+      margin: 24px auto 0;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      color: #6b9e7e;
+    }
+    .legend-dot {
+      width: 10px; height: 10px;
+      border-radius: 3px;
+    }
+
+    /* ── FULL LAYOUT ── */
+    .full-layout {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .top-row {
+      display: grid;
+      grid-template-columns: 130px 1fr 155px;
+      gap: 0;
+      align-items: start;
+    }
+
+    .actors-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 10px;
+      padding-right: 8px;
+    }
+
+    .center-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .ext-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 10px;
+      padding-left: 8px;
+    }
+
+    /* arrows between actors and browser */
+    .actor-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 4px;
+      height: 100%;
+    }
+
+    .horiz-arrow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      width: 100%;
+    }
+    .arrow-line {
+      flex: 1;
+      height: 1.5px;
+      background: linear-gradient(90deg, #2d6a4f, #52b788);
+    }
+    .arrow-head {
+      width: 0; height: 0;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-left: 8px solid #52b788;
+    }
+
+    /* ext arrow */
+    .ext-arrow-line {
+      flex: 1;
+      height: 1.5px;
+      background: linear-gradient(90deg, #8b5e2a, #e8c57a);
+    }
+    .ext-arrow-head {
+      width: 0; height: 0;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-left: 8px solid #e8c57a;
+    }
+
+    .section-connector {
+      text-align: center;
+      padding: 6px 0;
+      font-size: 18px;
+      color: #2d6a4f;
+      line-height: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌿 Terra Nova — System Architecture</h1>
+  <p class="subtitle">NGO Management &amp; Donation Platform · Three-Layer Architecture</p>
+
+  <div class="full-layout">
+
+    <!-- ══════════════════════════════════════
+         BROWSER BAR
+    ══════════════════════════════════════ -->
+    <div class="browser-bar">
+      <div class="browser-dots">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="browser-url">https://terranova.org</div>
+      <div class="browser-label">🌐 Web Browser</div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         TOP ROW: ACTORS | LAYERS | EXTERNAL
+    ══════════════════════════════════════ -->
+    <div class="top-row">
+
+      <!-- ACTORS -->
+      <div class="actors-panel">
+        <div style="font-size:10px;font-weight:700;color:#6b9e7e;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;text-align:center;">Users</div>
+
+        <div class="actor-box">
+          <span class="actor-icon">🙋</span>Volunteer
+        </div>
+        <div class="actor-box">
+          <span class="actor-icon">💚</span>Donor
+        </div>
+        <div class="actor-box">
+          <span class="actor-icon">🏛️</span>NGO Org
+        </div>
+        <div class="actor-box">
+          <span class="actor-icon">🛡️</span>Admin
+        </div>
+        <div class="actor-box" style="border-color:#1e4d38;color:#6b9e7e;">
+          <span class="actor-icon">👤</span>Guest User
+        </div>
+
+        <!-- Arrow label -->
+        <div style="margin-top:8px;text-align:center;">
+          <div style="display:flex;align-items:center;gap:4px;justify-content:center;">
+            <div style="flex:1;height:1.5px;background:linear-gradient(90deg,#2d6a4f,#52b788);"></div>
+            <div style="width:0;height:0;border-top:4px solid transparent;border-bottom:4px solid transparent;border-left:6px solid #52b788;"></div>
+          </div>
+          <div style="font-size:9px;color:#52b788;margin-top:3px;letter-spacing:0.06em;">HTTP / HTTPS</div>
+        </div>
+      </div>
+
+      <!-- CENTER LAYERS -->
+      <div class="center-panel">
+
+        <!-- ── LAYER 1: FRONTEND ── -->
+        <div class="layer-card layer-frontend">
+          <div class="layer-label">
+            <span class="dot"></span>
+            Presentation Layer (Frontend)
+          </div>
+          <div class="layer-inner">
+            <div class="module">
+              <div class="module-title">⚙️ Tech Stack</div>
+              <ul>
+                <li>Vanilla HTML5 / CSS3</li>
+                <li>JavaScript (ES6+)</li>
+                <li>Responsive UI (Flexbox/Grid)</li>
+              </ul>
+            </div>
+            <div class="module">
+              <div class="module-title">📄 Pages &amp; Features</div>
+              <ul>
+                <li>NGO browsing &amp; campaigns</li>
+                <li>Volunteer application form</li>
+                <li>Donation widget (Razorpay)</li>
+                <li>Auth forms (login/register)</li>
+              </ul>
+            </div>
+            <div class="module">
+              <div class="module-title">🖥️ Dashboards</div>
+              <ul>
+                <li>Donor dashboard</li>
+                <li>Volunteer dashboard</li>
+                <li>NGO dashboard</li>
+                <li>Admin dashboard</li>
+              </ul>
+            </div>
+            <div class="module">
+              <div class="module-title">🎨 Key Responsibilities</div>
+              <ul>
+                <li>User interface rendering</li>
+                <li>Form validation</li>
+                <li>JWT token storage</li>
+                <li>Leaderboard &amp; stats</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- REST API connector -->
+        <div class="rest-badge" style="margin:10px 0;">
+          <span>⇅ &nbsp; REST API</span>
+        </div>
+
+        <!-- ── LAYER 2: BACKEND ── -->
+        <div class="layer-card layer-backend">
+          <div class="layer-label">
+            <span class="dot"></span>
+            Application &amp; API Layer (Backend)
+          </div>
+          <div class="layer-inner four-col">
+            <div class="module">
+              <div class="module-title">🔐 Auth Module</div>
+              <ul>
+                <li>JWT token generation</li>
+                <li>OTP email verification</li>
+                <li>bcrypt hashing (×12)</li>
+                <li>Role-based access</li>
+                <li>Password reset flow</li>
+              </ul>
+            </div>
+            <div class="module">
+              <div class="module-title">🏛️ NGO Module</div>
+              <ul>
+                <li>Darpan ID validation</li>
+                <li>Admin approval flow</li>
+                <li>Campaign CRUD</li>
+                <li>Image upload (Multer)</li>
+                <li>Status notifications</li>
+              </ul>
+            </div>
+            <div class="module">
+              <div class="module-title">💚 Donor &amp; Volunteer</div>
+              <ul>
+                <li>Donation processing</li>
+                <li>Razorpay order API</li>
+                <li>Volunteer hour logging</li>
+                <li>Subscriber management</li>
+                <li>Donor leaderboard</li>
+              </ul>
+            </div>
+            <div class="module">
+              <div class="module-title">🛡️ Admin Module</div>
+              <ul>
+                <li>Platform management</li>
+                <li>NGO approve/reject</li>
+                <li>User management</li>
+                <li>Donation records</li>
+                <li>Rate limiting (API)</li>
+              </ul>
+            </div>
+          </div>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+            <div style="background:rgba(82,183,136,0.1);border:1px solid rgba(82,183,136,0.25);border-radius:6px;padding:4px 10px;font-size:10px;color:#52b788;">Node.js + Express.js</div>
+            <div style="background:rgba(82,183,136,0.1);border:1px solid rgba(82,183,136,0.25);border-radius:6px;padding:4px 10px;font-size:10px;color:#52b788;">Mongoose ODM</div>
+            <div style="background:rgba(82,183,136,0.1);border:1px solid rgba(82,183,136,0.25);border-radius:6px;padding:4px 10px;font-size:10px;color:#52b788;">express-rate-limit</div>
+            <div style="background:rgba(82,183,136,0.1);border:1px solid rgba(82,183,136,0.25);border-radius:6px;padding:4px 10px;font-size:10px;color:#52b788;">Multer (5MB)</div>
+            <div style="background:rgba(82,183,136,0.1);border:1px solid rgba(82,183,136,0.25);border-radius:6px;padding:4px 10px;font-size:10px;color:#52b788;">CORS + dotenv</div>
+          </div>
+        </div>
+
+        <!-- DB connector -->
+        <div class="db-arrow" style="margin:10px 0;">
+          <span>⇅ &nbsp; Secure Query / Data Access</span>
+        </div>
+
+        <!-- ── LAYER 3: DATABASE ── -->
+        <div class="layer-card layer-db">
+          <div class="layer-label">
+            <span class="dot"></span>
+            Data Layer (MongoDB / NoSQL)
+          </div>
+          <div class="layer-inner three-col">
+            <div class="module">
+              <div class="module-title">👤 User Collections</div>
+              <ul>
+                <li>Donors</li>
+                <li>VolunteerAccounts</li>
+                <li>Ngos</li>
+                <li>Admins</li>
+              </ul>
+            </div>
+            <div class="module">
+              <div class="module-title">📋 Activity Collections</div>
+              <ul>
+                <li>Donations</li>
+                <li>VolunteerLogs</li>
+                <li>Volunteers (applications)</li>
+                <li>Subscribers</li>
+              </ul>
+            </div>
+            <div class="module">
+              <div class="module-title">🏛️ NGO Collections</div>
+              <ul>
+                <li>Ngos (+ campaigns[])</li>
+                <li>ApprovedNgos (whitelist)</li>
+                <li>Campaign sub-documents</li>
+                <li>MongoDB Atlas (cloud)</li>
+              </ul>
+            </div>
+          </div>
+          <div class="db-tables">
+            <div class="db-table-chip">Donors</div>
+            <div class="db-table-chip">VolunteerAccounts</div>
+            <div class="db-table-chip">Ngos</div>
+            <div class="db-table-chip">Admins</div>
+            <div class="db-table-chip">Donations</div>
+            <div class="db-table-chip">VolunteerLogs</div>
+            <div class="db-table-chip">Volunteers</div>
+            <div class="db-table-chip">Subscribers</div>
+            <div class="db-table-chip">ApprovedNgos</div>
+          </div>
+        </div>
+
+      </div><!-- /center-panel -->
+
+      <!-- EXTERNAL SERVICES -->
+      <div class="ext-panel">
+        <div style="font-size:10px;font-weight:700;color:#e8c57a;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;text-align:center;">External Services</div>
+
+        <div class="ext-card">
+          <div class="ext-title">💳 Payment Gateway</div>
+          <div class="ext-item">💰 Razorpay</div>
+          <div class="ext-item" style="font-size:10px;color:#8b6e3a;">Order create &amp; verify</div>
+        </div>
+
+        <div class="ext-card">
+          <div class="ext-title">📧 Email Service</div>
+          <div class="ext-item">✉️ Nodemailer SMTP</div>
+          <div class="ext-item" style="font-size:10px;color:#8b6e3a;">Welcome / Receipt</div>
+          <div class="ext-item" style="font-size:10px;color:#8b6e3a;">OTP / NGO alerts</div>
+        </div>
+
+        <div class="ext-card">
+          <div class="ext-title">☁️ Cloud Database</div>
+          <div class="ext-item">🍃 MongoDB Atlas</div>
+          <div class="ext-item" style="font-size:10px;color:#8b6e3a;">DNS: 8.8.8.8 (Google)</div>
+        </div>
+
+        <div class="ext-card">
+          <div class="ext-title">📁 File Storage</div>
+          <div class="ext-item">📂 Multer (local)</div>
+          <div class="ext-item" style="font-size:10px;color:#8b6e3a;">/uploads on Render</div>
+        </div>
+
+        <div class="ext-card">
+          <div class="ext-title">🚀 Hosting</div>
+          <div class="ext-item">▲ Vercel (Frontend)</div>
+          <div class="ext-item">⚙️ Render (Backend)</div>
+        </div>
+
+        <!-- Arrow label -->
+        <div style="margin-top:8px;text-align:center;">
+          <div style="display:flex;align-items:center;gap:4px;justify-content:center;">
+            <div style="flex:1;height:1.5px;background:linear-gradient(90deg,#8b5e2a,#e8c57a);"></div>
+            <div style="width:0;height:0;border-top:4px solid transparent;border-bottom:4px solid transparent;border-left:6px solid #e8c57a;"></div>
+          </div>
+          <div style="font-size:9px;color:#e8c57a;margin-top:3px;letter-spacing:0.06em;">API Calls</div>
+        </div>
+      </div>
+
+    </div><!-- /top-row -->
+
+    <!-- ══════════════════════════════════════
+         LEGEND
+    ══════════════════════════════════════ -->
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#2e6da4;"></div>
+        Presentation Layer (Frontend)
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#2d6a4f;"></div>
+        Application &amp; API Layer (Backend)
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#6a2d9e;"></div>
+        Data Layer (MongoDB)
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#8b5e2a;"></div>
+        External Services
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#1a3a2e;border:1px solid #2d6a4f;"></div>
+        User Actors
+      </div>
+    </div>
+
+  </div><!-- /full-layout -->
+
+</body>
+</html>

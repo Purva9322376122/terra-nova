@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Volunteer Dashboard — Terra Nova</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--forest:#1a3a2e;--forest-mid:#2d6a4f;--forest-lt:#52b788;--gold:#d4a853;--ivory:#f5f0e8;--ivory-dk:#ede6d8;--ivory-mid:#d9d0bc;--muted:#5a7365;--white:#fff;--red:#c0392b;--red-lt:rgba(192,57,43,0.08);--radius:10px;--sw:240px}
+body{font-family:'DM Sans',sans-serif;background:var(--ivory);min-height:100vh;display:flex;color:var(--forest)}
+.sidebar{width:var(--sw);background:var(--forest);min-height:100vh;position:fixed;top:0;left:0;display:flex;flex-direction:column;z-index:100}
+.sb-logo{display:flex;align-items:center;gap:8px;padding:22px 20px;text-decoration:none;color:var(--ivory);font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-logo svg{width:20px;height:26px;color:var(--forest-lt)}
+.sb-info{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+.si-label{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:rgba(245,240,232,.4);margin-bottom:4px}
+.si-name{font-size:.88rem;font-weight:600;color:var(--ivory);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.si-email{font-size:.72rem;color:rgba(245,240,232,.45);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-nav{flex:1;padding:12px 10px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius);font-size:.85rem;font-weight:500;color:rgba(245,240,232,.55);cursor:pointer;transition:all .15s;margin-bottom:2px;border:none;background:none;width:100%;text-align:left;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,.06);color:var(--ivory)}
+.nav-item.active{background:rgba(82,183,136,.15);color:var(--forest-lt)}
+.nav-item-icon{font-size:1rem;width:20px;text-align:center}
+.sb-footer{padding:12px 10px;border-top:1px solid rgba(255,255,255,.08)}
+.btn-logout{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.2);border-radius:var(--radius);color:#e88080;font-size:.82rem;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer}
+.btn-logout:hover{background:rgba(192,57,43,.25)}
+.main{margin-left:var(--sw);flex:1;padding:32px;max-width:calc(100vw - var(--sw))}
+.page-section{display:none}.page-section.active{display:block}
+.page-header{margin-bottom:28px}
+.page-header h1{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;color:var(--forest)}
+.page-header p{font-size:.85rem;color:var(--muted);margin-top:4px}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:var(--white);border:1px solid var(--ivory-mid);border-radius:var(--radius);padding:18px 20px}
+.sc-label{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.sc-num{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--forest);line-height:1;margin:6px 0 4px}
+.sc-sub{font-size:.72rem;color:var(--muted)}
+.card{background:var(--white);border:1px solid var(--ivory-mid);border-radius:var(--radius);padding:24px;margin-bottom:20px}
+.card-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--forest);margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--ivory-dk);display:flex;align-items:center;justify-content:space-between}
+.form-group{margin-bottom:14px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label{display:block;font-size:.76rem;font-weight:600;color:var(--forest);margin-bottom:5px}
+input,select,textarea{width:100%;padding:9px 12px;font-size:.85rem;font-family:'DM Sans',sans-serif;color:var(--forest);background:var(--ivory);border:1.5px solid var(--ivory-mid);border-radius:var(--radius);outline:none;transition:border-color .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--forest-mid);background:var(--white)}
+input[readonly]{opacity:.6;cursor:not-allowed}
+textarea{resize:vertical;min-height:70px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;font-size:.83rem;font-weight:600;font-family:'DM Sans',sans-serif;border-radius:var(--radius);cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--forest);color:var(--ivory)}.btn-primary:hover{background:var(--forest-mid)}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed}
+.btn-ghost{background:var(--ivory-dk);color:var(--forest);border:1px solid var(--ivory-mid)}.btn-ghost:hover{background:var(--ivory-mid)}
+.alert{padding:10px 14px;border-radius:var(--radius);font-size:.82rem;margin-bottom:16px;display:none}
+.alert.show{display:block}
+.alert-success{background:rgba(82,183,136,.1);border:1px solid rgba(82,183,136,.25);color:var(--forest-mid)}
+.alert-error{background:var(--red-lt);border:1px solid rgba(192,57,43,.2);color:var(--red)}
+.log-item{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--ivory-dk)}
+.log-item:last-child{border-bottom:none}
+.log-hrs{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--forest),var(--forest-mid));color:var(--ivory);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.log-hrs .h{font-size:1rem;font-weight:700;line-height:1}
+.log-hrs .l{font-size:.55rem;text-transform:uppercase;opacity:.7}
+.log-info .camp{font-size:.88rem;font-weight:600;color:var(--forest)}
+.log-info .meta{font-size:.72rem;color:var(--muted);margin-top:2px}
+.log-info .desc{font-size:.78rem;color:var(--muted);margin-top:4px;font-style:italic}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted);font-size:.88rem}
+.empty-state .es-icon{font-size:2.5rem;margin-bottom:12px}
+.spinner{width:36px;height:36px;border:3px solid var(--ivory-dk);border-top-color:var(--forest-mid);border-radius:50%;animation:spin .7s linear infinite;margin:40px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:640px){.sidebar{width:100%;min-height:auto;position:relative}.main{margin-left:0;padding:20px;max-width:100%}.form-row{grid-template-columns:1fr}.stats-row{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <a href="index.html" class="sb-logo">
+    <svg viewBox="0 0 32 42" fill="none"><path d="M16 40 C16 40 2 30 2 16 C2 8 8 2 16 2 C24 2 30 8 30 16 C30 30 16 40 16 40Z" fill="currentColor"/><line x1="16" y1="40" x2="16" y2="10" stroke="#1a3a2e" stroke-width="1.2"/></svg>
+    Terra Nova
+  </a>
+  <div class="sb-info">
+    <div class="si-label">Volunteer Account</div>
+    <div class="si-name" id="sbName">—</div>
+    <div class="si-email" id="sbEmail">—</div>
+  </div>
+  <nav class="sb-nav">
+    <button class="nav-item active" onclick="showSection('overview')"><span class="nav-item-icon">📊</span> Overview</button>
+    <button class="nav-item" onclick="showSection('log')"><span class="nav-item-icon">⏱</span> Log Hours</button>
+    <button class="nav-item" onclick="showSection('history')"><span class="nav-item-icon">📋</span> My History</button>
+    <button class="nav-item" onclick="showSection('profile')"><span class="nav-item-icon">👤</span> My Profile</button>
+    <a href="index.html" class="nav-item"><span class="nav-item-icon">🌐</span> Public Site</a>
+  </nav>
+  <div class="sb-footer">
+    <button class="btn-logout" onclick="logout()">🚪 Sign Out</button>
+  </div>
+</aside>
+
+<main class="main">
+  <div id="loadingSpinner"><div class="spinner"></div></div>
+
+  <div class="page-section" id="overviewSection">
+    <div class="page-header"><h1 id="welcomeTitle">Welcome back!</h1><p>Here's a summary of your volunteer journey.</p></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="sc-label">Total Hours</div><div class="sc-num" id="statHours">0</div><div class="sc-sub">All time</div></div>
+      <div class="stat-card"><div class="sc-label">Sessions</div><div class="sc-num" id="statSessions">0</div><div class="sc-sub">Logged</div></div>
+      <div class="stat-card"><div class="sc-label">Campaigns</div><div class="sc-num" id="statCampaigns">0</div><div class="sc-sub">Contributed to</div></div>
+    </div>
+    <div class="card"><div class="card-title">Recent Activity</div><div id="recentLogs"></div></div>
+    <div style="text-align:center;margin-top:8px">
+      <button class="btn btn-ghost" onclick="printCert()">🏅 Download Certificate</button>
+    </div>
+  </div>
+
+  <div class="page-section" id="logSection">
+    <div class="page-header"><h1>Log Hours</h1><p>Record your volunteer work for a campaign.</p></div>
+    <div class="card">
+      <div class="card-title">New Entry</div>
+      <div class="alert alert-success" id="logSuccess"></div>
+      <div class="alert alert-error" id="logError"></div>
+      <div class="form-group"><label>Campaign / Activity *</label><input type="text" id="lCampaign" placeholder="e.g. Amazon Reforestation"/></div>
+      <div class="form-group"><label>NGO Name</label><input type="text" id="lNgo" placeholder="e.g. Green Earth Foundation"/></div>
+      <div class="form-row">
+        <div class="form-group"><label>Hours Worked *</label><input type="number" id="lHours" placeholder="e.g. 4" min="0.5" step="0.5"/></div>
+        <div class="form-group"><label>Date *</label><input type="date" id="lDate"/></div>
+      </div>
+      <div class="form-group"><label>What did you do? (optional)</label><textarea id="lDesc" placeholder="Briefly describe your volunteer work…"></textarea></div>
+      <button class="btn btn-primary" id="logBtn" onclick="logHours()"><span>✅ Log Hours</span></button>
+    </div>
+  </div>
+
+  <div class="page-section" id="historySection">
+    <div class="page-header"><h1>My History</h1><p>All your logged volunteer sessions.</p></div>
+    <div class="card">
+      <div class="card-title">All Sessions <span id="histTotal" style="font-size:.8rem;font-weight:400;color:var(--muted)"></span></div>
+      <div id="historyList"></div>
+    </div>
+  </div>
+
+  <div class="page-section" id="profileSection">
+    <div class="page-header"><h1>My Profile</h1><p>Update your account details.</p></div>
+    <div class="card">
+      <div class="card-title">Account Details</div>
+      <div class="alert alert-success" id="profileSuccess"></div>
+      <div class="alert alert-error" id="profileError"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Full Name</label><input type="text" id="pName"/></div>
+        <div class="form-group"><label>Phone</label><input type="tel" id="pPhone"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Skills</label><input type="text" id="pSkills" placeholder="e.g. Teaching, Coding"/></div>
+        <div class="form-group"><label>Location</label><input type="text" id="pLocation" placeholder="City, State"/></div>
+      </div>
+      <div class="form-group"><label>Email (read-only)</label><input type="email" id="pEmail" readonly/></div>
+      <button class="btn btn-primary" id="saveBtn" onclick="saveProfile()"><span>Save Changes</span></button>
+    </div>
+  </div>
+</main>
+
+<script src="config.js"></script>
+<script>
+  const token = localStorage.getItem('vol_token');
+  if (!token) window.location.href = 'volunteer-login.html';
+
+  let volData = null, logsData = [];
+
+  async function init() {
+    document.getElementById('sbName').textContent  = localStorage.getItem('vol_name')  || '—';
+    document.getElementById('sbEmail').textContent = localStorage.getItem('vol_email') || '—';
+    document.getElementById('lDate').value = new Date().toISOString().split('T')[0];
+    await loadProfile();
+    document.getElementById('loadingSpinner').style.display = 'none';
+    showSection('overview');
+  }
+
+  async function loadProfile() {
+    try {
+      const res = await fetch(API + '/api/volunteer/profile', { headers: { Authorization: 'Bearer ' + token } });
+      if (res.status === 401) { logout(); return; }
+      const data = await res.json();
+      if (data.success) { volData = data.data; logsData = data.logs || []; populateAll(); }
+    } catch(e) { console.error(e); }
+  }
+
+  function populateAll() {
+    if (!volData) return;
+    document.getElementById('welcomeTitle').textContent = 'Welcome back, ' + volData.name + '!';
+    document.getElementById('sbName').textContent  = volData.name;
+    document.getElementById('pName').value     = volData.name     || '';
+    document.getElementById('pPhone').value    = volData.phone    || '';
+    document.getElementById('pSkills').value   = volData.skills   || '';
+    document.getElementById('pLocation').value = volData.location || '';
+    document.getElementById('pEmail').value    = volData.email    || '';
+    const totalHours = logsData.reduce((s,l) => s + l.hours, 0);
+    const campaigns  = [...new Set(logsData.map(l => l.campaign))].length;
+    document.getElementById('statHours').textContent     = totalHours;
+    document.getElementById('statSessions').textContent  = logsData.length;
+    document.getElementById('statCampaigns').textContent = campaigns;
+    document.getElementById('histTotal').textContent = logsData.length ? '(' + logsData.length + ' sessions · ' + totalHours + ' hrs total)' : '';
+    renderLogs(logsData.slice(0, 5), 'recentLogs');
+    renderLogs(logsData, 'historyList');
+  }
+
+  function renderLogs(logs, elId) {
+    const el = document.getElementById(elId);
+    if (!logs.length) { el.innerHTML = '<div class="empty-state"><div class="es-icon">⏱</div><p>No hours logged yet.</p></div>'; return; }
+    el.innerHTML = logs.map(function(l) {
+      const d = new Date(l.date).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+      return '<div class="log-item"><div class="log-hrs"><div class="h">' + l.hours + '</div><div class="l">hrs</div></div><div class="log-info"><div class="camp">' + l.campaign + (l.ngoName ? ' · ' + l.ngoName : '') + '</div><div class="meta">📅 ' + d + '</div>' + (l.description ? '<div class="desc">"' + l.description + '"</div>' : '') + '</div></div>';
+    }).join('');
+  }
+
+  async function logHours() {
+    const campaign = document.getElementById('lCampaign').value.trim();
+    const ngoName  = document.getElementById('lNgo').value.trim();
+    const hours    = parseFloat(document.getElementById('lHours').value);
+    const date     = document.getElementById('lDate').value;
+    const desc     = document.getElementById('lDesc').value.trim();
+    if (!campaign) return showAlert('logError', 'Campaign name is required.');
+    if (!hours || hours < 0.5) return showAlert('logError', 'Minimum 0.5 hours.');
+    if (!date) return showAlert('logError', 'Please select a date.');
+    const btn = document.getElementById('logBtn');
+    btn.disabled = true; btn.querySelector('span').textContent = 'Logging…';
+    try {
+      const res = await fetch(API + '/api/volunteer-hours', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ volunteerName:volData.name, volunteerEmail:volData.email, campaign, ngoName, hours, date, description:desc }) });
+      const data = await res.json();
+      if (data.success) { showAlert('logSuccess', '✅ ' + hours + ' hour' + (hours!==1?'s':'') + ' logged!'); document.getElementById('lHours').value=''; document.getElementById('lDesc').value=''; document.getElementById('lDate').value=new Date().toISOString().split('T')[0]; await loadProfile(); }
+      else showAlert('logError', data.error || 'Failed.');
+    } catch { showAlert('logError', 'Could not connect to server.'); }
+    finally { btn.disabled=false; btn.querySelector('span').textContent='✅ Log Hours'; }
+  }
+
+  async function saveProfile() {
+    const name = document.getElementById('pName').value.trim();
+    if (!name) return showAlert('profileError', 'Name is required.');
+    const btn = document.getElementById('saveBtn');
+    btn.disabled=true; btn.querySelector('span').textContent='Saving…';
+    try {
+      const res = await fetch(API + '/api/volunteer/profile', { method:'PUT', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}, body:JSON.stringify({ name, phone:document.getElementById('pPhone').value.trim(), skills:document.getElementById('pSkills').value.trim(), location:document.getElementById('pLocation').value.trim() }) });
+      const data = await res.json();
+      if (data.success) { volData=data.data; localStorage.setItem('vol_name',volData.name); document.getElementById('sbName').textContent=volData.name; document.getElementById('welcomeTitle').textContent='Welcome back, '+volData.name+'!'; showAlert('profileSuccess','Profile updated!'); }
+      else showAlert('profileError', data.error||'Update failed.');
+    } catch { showAlert('profileError','Could not connect to server.'); }
+    finally { btn.disabled=false; btn.querySelector('span').textContent='Save Changes'; }
+  }
+
+  function printCert() {
+    const totalHours = logsData.reduce((sum, log) => sum + Number(log.hours), 0);
+    const sessions = logsData.length;
+    const issuedOn = new Date().toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    });
+
+    const volunteerName = volData?.name || "Volunteer";
+    const volunteerEmail = volData?.email || "Not Available";
+
+    const certificateHTML = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Volunteer Certificate</title>
+        <style>
+            body {
+                font-family: Georgia, serif;
+                background: #f5f0e8;
+                margin: 0;
+                padding: 40px;
+                color: #1a3a2e;
+            }
+
+            .certificate {
+                max-width: 800px;
+                margin: auto;
+                background: white;
+                padding: 60px;
+                border: 2px solid #d9d0bc;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+                text-align: center;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+                margin-bottom: 10px;
+                color: #1a3a2e;
+            }
+
+            h2 {
+                font-size: 1.6rem;
+                margin-bottom: 30px;
+                color: #2d6a4f;
+            }
+
+            .hours {
+                font-size: 3rem;
+                font-weight: bold;
+                color: #2d6a4f;
+                margin: 20px 0;
+            }
+
+            .details {
+                margin-top: 30px;
+                font-size: 1rem;
+                line-height: 1.8;
+                text-align: left;
+            }
+
+            .footer {
+                margin-top: 40px;
+                font-size: 0.85rem;
+                color: #5a7365;
+                border-top: 1px solid #ede6d8;
+                padding-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="certificate">
+            <h1>🌿 Terra Nova NGO</h1>
+            <h2>Certificate of Volunteer Participation</h2>
+
+            <p>This certificate is proudly presented to</p>
+            <h2>${volunteerName}</h2>
+
+            <p>for successfully contributing</p>
+            <div class="hours">${totalHours} Hours</div>
+
+            <div class="details">
+                <p><strong>Email:</strong> ${volunteerEmail}</p>
+                <p><strong>Total Sessions:</strong> ${sessions}</p>
+                <p><strong>Total Hours:</strong> ${totalHours}</p>
+                <p><strong>Issued On:</strong> ${issuedOn}</p>
+            </div>
+
+            <div class="footer">
+                Terra Nova NGO · Auto-generated Volunteer Certificate
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+
+    const printWindow = window.open('', '_blank');
+    printWindow.document.open();
+    printWindow.document.write(certificateHTML);
+    printWindow.document.close();
+    printWindow.print();
+}
+
+  function showSection(name) {
+    document.querySelectorAll('.page-section').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.getElementById(name+'Section').classList.add('active');
+    const idx={overview:0,log:1,history:2,profile:3};
+    const items=document.querySelectorAll('.nav-item');
+    if(idx[name]!==undefined) items[idx[name]].classList.add('active');
+  }
+
+  function showAlert(id,msg){const el=document.getElementById(id);el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),4000);}
+  function logout(){['vol_token','vol_name','vol_email'].forEach(k=>localStorage.removeItem(k));window.location.href='volunteer-login.html';}
+
+  init();
+</script>
+</body>
+</html>

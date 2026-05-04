@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Donor Portal — Terra Nova</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --forest: #1a3a2e; --forest-mid: #2d6a4f; --forest-lt: #52b788;
+      --gold-lt: #e8c57a; --ivory: #f5f0e8; --ivory-dk: #ede6d8;
+      --muted: #5a7365; --white: #ffffff; --red: #c0392b; --radius: 10px;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--ivory); min-height: 100vh; display: flex; flex-direction: column; }
+    .topbar { background: var(--forest); padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; }
+    .topbar-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--ivory); font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; }
+    .topbar-logo svg { width: 22px; height: 28px; color: var(--forest-lt); }
+    .topbar-back { font-size: 0.82rem; color: rgba(245,240,232,0.6); text-decoration: none; display: flex; align-items: center; gap: 5px; }
+    .topbar-back:hover { color: var(--ivory); }
+    .page { flex: 1; display: grid; grid-template-columns: 1fr 1fr; min-height: calc(100vh - 56px); }
+    .left-panel { background: linear-gradient(145deg, #0d3b2e 0%, #1a5c42 60%, #2d8a6a 100%); padding: 60px 48px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
+    .left-panel::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 80% 30%, rgba(212,168,83,0.15) 0%, transparent 70%); }
+    .left-panel::after { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 36px 36px; }
+    .lp-content { position: relative; z-index: 1; }
+    .lp-badge { display: inline-flex; align-items: center; gap: 7px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: var(--gold-lt); font-size: 0.74rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; padding: 5px 12px; border-radius: 100px; margin-bottom: 28px; }
+    .lp-badge span { width: 5px; height: 5px; background: var(--gold-lt); border-radius: 50%; }
+    .lp-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 700; color: var(--ivory); line-height: 1.15; margin-bottom: 20px; }
+    .lp-title em { font-style: italic; color: var(--gold-lt); }
+    .lp-desc { font-size: 0.92rem; color: rgba(245,240,232,0.65); line-height: 1.75; margin-bottom: 36px; max-width: 380px; }
+    .lp-features { display: flex; flex-direction: column; gap: 14px; }
+    .lp-feature { display: flex; align-items: flex-start; gap: 12px; }
+    .lp-feature-icon { width: 36px; height: 36px; background: rgba(255,255,255,0.08); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+    .lp-feature-text strong { display: block; font-size: 0.85rem; font-weight: 600; color: var(--ivory); }
+    .lp-feature-text span { font-size: 0.78rem; color: rgba(245,240,232,0.55); }
+    .right-panel { display: flex; align-items: center; justify-content: center; padding: 40px 32px; background: var(--white); }
+    .form-box { width: 100%; max-width: 440px; }
+    .form-tabs { display: flex; background: var(--ivory-dk); border-radius: var(--radius); padding: 4px; margin-bottom: 24px; }
+    .form-tab { flex: 1; padding: 9px; font-size: 0.85rem; font-weight: 600; color: var(--muted); background: transparent; border: none; border-radius: 7px; cursor: pointer; transition: all 0.2s; }
+    .form-tab.active { background: var(--white); color: var(--forest); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .form-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: var(--forest); margin-bottom: 6px; }
+    .form-subtitle { font-size: 0.83rem; color: var(--muted); margin-bottom: 20px; }
+    .form-group { margin-bottom: 14px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--forest); margin-bottom: 5px; }
+    .req { color: var(--red); }
+    input { width: 100%; padding: 10px 13px; font-size: 0.88rem; font-family: 'DM Sans', sans-serif; color: var(--forest); background: var(--ivory); border: 1.5px solid #d9d0bc; border-radius: var(--radius); outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+    input:focus { border-color: var(--forest-mid); box-shadow: 0 0 0 3px rgba(45,106,79,0.1); background: var(--white); }
+    .btn-submit { width: 100%; padding: 12px; background: var(--forest); color: var(--ivory); font-size: 0.9rem; font-weight: 600; font-family: 'DM Sans', sans-serif; border: none; border-radius: var(--radius); cursor: pointer; margin-top: 6px; transition: background 0.2s, transform 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-submit:hover { background: var(--forest-mid); transform: translateY(-1px); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .banner { border-radius: var(--radius); padding: 12px 15px; font-size: 0.82rem; line-height: 1.55; margin-bottom: 14px; display: none; }
+    .banner.show { display: block; }
+    .banner.error { background: rgba(192,57,43,0.08); border: 1px solid rgba(192,57,43,0.2); color: var(--red); }
+    .banner.success { background: #f0fdf4; border: 1px solid #86efac; color: #166534; }
+    .form-section { display: none; }
+    .form-section.active { display: block; }
+    @media (max-width: 768px) { .page { grid-template-columns: 1fr; } .left-panel { display: none; } .right-panel { padding: 32px 20px; } }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="index.html" class="topbar-logo">
+      <svg viewBox="0 0 32 42" fill="none"><path d="M16 40 C16 40 2 30 2 16 C2 8 8 2 16 2 C24 2 30 8 30 16 C30 30 16 40 16 40Z" fill="currentColor"/><line x1="16" y1="40" x2="16" y2="10" stroke="#1a3a2e" stroke-width="1.2"/></svg>
+      Terra Nova
+    </a>
+    <a href="index.html" class="topbar-back">
+      <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to main site
+    </a>
+  </div>
+
+  <div class="page">
+    <div class="left-panel">
+      <div class="lp-content">
+        <div class="lp-badge"><span></span>Donor Portal</div>
+        <h1 class="lp-title">Track your<br/><em>impact.</em></h1>
+        <p class="lp-desc">Create a free donor account to see your full donation history, save campaigns to your wishlist, and download tax receipts anytime.</p>
+        <div class="lp-features">
+          <div class="lp-feature"><div class="lp-feature-icon">📋</div><div class="lp-feature-text"><strong>Donation History</strong><span>Every donation in one place</span></div></div>
+          <div class="lp-feature"><div class="lp-feature-icon">❤️</div><div class="lp-feature-text"><strong>Wishlist</strong><span>Save campaigns for later</span></div></div>
+          <div class="lp-feature"><div class="lp-feature-icon">🖨️</div><div class="lp-feature-text"><strong>Print Receipts</strong><span>Download receipts instantly</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div class="form-box">
+        <div class="form-tabs">
+          <button class="form-tab active" onclick="switchTab('login')">Login</button>
+          <button class="form-tab" onclick="switchTab('register')">Create Account</button>
+        </div>
+        <div class="banner error"   id="bannerError"></div>
+        <div class="banner success" id="bannerSuccess"></div>
+
+        <!-- LOGIN -->
+        <div class="form-section active" id="loginSection">
+          <div class="form-title">Welcome back</div>
+          <div class="form-subtitle">Sign in to your donor account</div>
+          <div class="form-group">
+            <label for="loginEmail">Email Address</label>
+            <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" />
+          </div>
+          <button class="btn-submit" id="loginBtn" onclick="handleLogin()">
+            <span>Sign In</span>
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <p style="text-align:center;margin-top:12px;font-size:0.78rem;color:var(--muted)">
+            <button onclick="showForgot()" style="background:none;border:none;color:var(--forest-mid);cursor:pointer;font-size:0.78rem;font-family:'DM Sans',sans-serif;font-weight:600;text-decoration:underline;">Forgot password?</button>
+          </p>
+
+          <!-- FORGOT PASSWORD PANEL -->
+          <div id="forgotPanel" style="display:none;margin-top:16px;background:var(--ivory);border:1.5px solid var(--ivory-dk);border-radius:var(--radius);padding:16px;">
+            <p style="font-size:0.8rem;font-weight:700;color:var(--forest);margin-bottom:10px;">🔑 Reset Password</p>
+            <div style="display:flex;gap:8px;">
+              <input type="email" id="forgotEmail" placeholder="Enter your registered email" style="flex:1;" />
+              <button onclick="sendReset()" style="padding:10px 14px;background:var(--forest);color:var(--ivory);border:none;border-radius:var(--radius);cursor:pointer;font-size:0.82rem;font-family:'DM Sans',sans-serif;font-weight:600;white-space:nowrap;">Send Link</button>
+            </div>
+            <div id="forgotMsg" style="margin-top:8px;font-size:0.78rem;"></div>
+          </div>
+        </div>
+
+        <!-- REGISTER -->
+        <div class="form-section" id="registerSection">
+          <div class="form-title">Create account</div>
+          <div class="form-subtitle">Join thousands of donors making a difference</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="regName">Full Name <span class="req">*</span></label>
+              <input type="text" id="regName" placeholder="Your name" />
+            </div>
+            <div class="form-group">
+              <label for="regPhone">Phone</label>
+              <input type="tel" id="regPhone" placeholder="+91 98765 43210" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="regEmail">Email Address <span class="req">*</span></label>
+            <input type="email" id="regEmail" placeholder="you@example.com" autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label for="regPassword">Password <span class="req">*</span> <span style="font-weight:400;color:var(--muted)">(min 8 chars)</span></label>
+            <input type="password" id="regPassword" placeholder="••••••••" autocomplete="new-password" />
+          </div>
+          <button class="btn-submit" id="registerBtn" onclick="handleRegister()">
+            <span>Create Account</span>
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+    if (localStorage.getItem('donor_token')) window.location.href = 'donor-dashboard.html';
+
+    function switchTab(tab) {
+      document.querySelectorAll('.form-tab').forEach((t, i) => t.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'register')));
+      document.getElementById('loginSection').classList.toggle('active', tab === 'login');
+      document.getElementById('registerSection').classList.toggle('active', tab === 'register');
+      clearBanners();
+    }
+    function clearBanners() {
+      ['bannerError','bannerSuccess'].forEach(id => { const el = document.getElementById(id); el.classList.remove('show'); el.innerHTML = ''; });
+    }
+    function showBanner(type, html) {
+      clearBanners();
+      const el = document.getElementById('banner' + type.charAt(0).toUpperCase() + type.slice(1));
+      el.innerHTML = html; el.classList.add('show');
+    }
+
+    async function handleLogin() {
+      clearBanners();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      if (!email || !password) return showBanner('error', '⚠️ Please enter your email and password.');
+      const btn = document.getElementById('loginBtn');
+      btn.disabled = true; btn.querySelector('span').textContent = 'Signing in…';
+      try {
+        const res = await fetch(`${API}/api/donor/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
+        const data = await res.json();
+        if (data.success) {
+          localStorage.setItem('donor_token', data.token);
+          localStorage.setItem('donor_name',  data.donor.name);
+          localStorage.setItem('donor_email', data.donor.email);
+          window.location.href = 'donor-dashboard.html';
+        } else if (data.requiresOtp) {
+          showBanner('error', '⚠️ ' + data.error);
+          showOtpPanel(data.email, 'donor');
+        } else {
+          showBanner('error', '⚠️ ' + (data.error || 'Login failed.'));
+        }
+      } catch { showBanner('error', '⚠️ Could not connect to server. Make sure the backend is running.'); }
+      finally { btn.disabled = false; btn.querySelector('span').textContent = 'Sign In'; }
+    }
+
+    async function handleRegister() {
+      clearBanners();
+      const name     = document.getElementById('regName').value.trim();
+      const email    = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPassword').value;
+      const phone    = document.getElementById('regPhone').value.trim();
+      if (!name || !email || !password) return showBanner('error', '⚠️ Name, email and password are required.');
+      if (password.length < 8) return showBanner('error', '⚠️ Password must be at least 8 characters.');
+      const btn = document.getElementById('registerBtn');
+      btn.disabled = true; btn.querySelector('span').textContent = 'Creating…';
+      try {
+        const res = await fetch(`${API}/api/donor/register`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, password, phone }) });
+        const data = await res.json();
+        if (data.success) {
+          if (data.requiresOtp) {
+            showBanner('success', '✅ Account created! Check your email for a 6-digit OTP to verify your account.');
+            showOtpPanel(email, 'donor');
+          } else {
+            showBanner('success', '✅ Account created! You can now sign in.');
+            switchTab('login');
+            document.getElementById('loginEmail').value = email;
+          }
+        } else {
+          showBanner('error', '⚠️ ' + (data.error || 'Registration failed.'));
+        }
+      } catch { showBanner('error', '⚠️ Could not connect to server.'); }
+      finally { btn.disabled = false; btn.querySelector('span').textContent = 'Create Account'; }
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Enter') return;
+      if (document.getElementById('loginSection').classList.contains('active')) handleLogin();
+      else handleRegister();
+    });
+
+    function showForgot() {
+      const p = document.getElementById('forgotPanel');
+      p.style.display = p.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function showOtpPanel(email, type) {
+      const existing = document.getElementById('otpPanel');
+      if (existing) existing.remove();
+      const panel = document.createElement('div');
+      panel.id = 'otpPanel';
+      panel.style.cssText = 'margin-top:16px;background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:16px';
+      panel.innerHTML = `<p style="font-size:0.82rem;font-weight:700;color:#166534;margin-bottom:10px">🔐 Enter the 6-digit OTP sent to ${email}</p>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="otpInput" maxlength="6" placeholder="Enter OTP" style="flex:1;padding:10px 13px;font-size:1rem;letter-spacing:0.2em;text-align:center;border:1.5px solid #d9d0bc;border-radius:10px;outline:none;font-family:'DM Sans',sans-serif" />
+          <button onclick="verifyOtp('${email}','${type}')" style="padding:10px 16px;background:#1a3a2e;color:#f5f0e8;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.85rem">Verify</button>
+        </div>
+        <div id="otpMsg" style="margin-top:8px;font-size:0.78rem"></div>`;
+      document.querySelector('.form-box').appendChild(panel);
+    }
+
+    async function verifyOtp(email, type) {
+      const otp = document.getElementById('otpInput').value.trim();
+      const msg = document.getElementById('otpMsg');
+      if (!otp || otp.length !== 6) { msg.style.color='var(--red)'; msg.textContent='Please enter the 6-digit OTP.'; return; }
+      msg.style.color='var(--muted)'; msg.textContent='Verifying…';
+      try {
+        const endpoint = type === 'donor' ? '/api/donor/verify-otp' : '/api/volunteer/verify-otp';
+        const res = await fetch(`${API}${endpoint}`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email, otp}) });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('otpPanel').remove();
+          showBanner('success', '✅ Email verified! You can now sign in.');
+          switchTab('login');
+          document.getElementById('loginEmail').value = email;
+        } else { msg.style.color='var(--red)'; msg.textContent='⚠️ ' + (data.error || 'Invalid OTP.'); }
+      } catch { msg.style.color='var(--red)'; msg.textContent='⚠️ Could not connect to server.'; }
+    }
+
+    async function sendReset() {
+      const email = document.getElementById('forgotEmail').value.trim();
+      const msg   = document.getElementById('forgotMsg');
+      if (!email) { msg.style.color='var(--red)'; msg.textContent='Please enter your email.'; return; }
+      msg.style.color='var(--muted)'; msg.textContent='Sending…';
+      try {
+        // Build frontendUrl: use 127.0.0.1 with the correct port and path prefix
+        const _origin = window.location.origin.replace(/^(https?:\/\/)[\d.]+/, '$1127.0.0.1');
+        const _pathPrefix = window.location.pathname.replace(/\/[^/]*$/, ''); // e.g. /Frontend
+        const frontendUrl = _origin + _pathPrefix;
+        const res  = await fetch(`${API}/api/donor/forgot-password`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email, frontendUrl}) });
+        const data = await res.json();
+        msg.style.color = data.success ? '#166534' : 'var(--red)';
+        msg.textContent = data.success ? '✅ Reset link sent! Check your email.' : '⚠️ ' + (data.error||'Failed.');
+      } catch { msg.style.color='var(--red)'; msg.textContent='⚠️ Could not connect to server.'; }
+    }
+  </script>
+</body>
+</html>

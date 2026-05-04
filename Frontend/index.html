@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terra Nova — Change the World, One Action at a Time</title>
+  <meta name="description" content="Terra Nova NGO — empowering communities, restoring ecosystems, building futures." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 42'><path d='M16 40 C16 40 2 30 2 16 C2 8 8 2 16 2 C24 2 30 8 30 16 C30 30 16 40 16 40Z' fill='%232d6a4f'/></svg>" />
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════
+       LOADER
+  ═══════════════════════════════════════ -->
+  <div id="loader" aria-hidden="true">
+    <div class="loader-inner">
+      <svg class="loader-leaf" viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M30 75 C30 75 5 55 5 30 C5 15 17 5 30 5 C43 5 55 15 55 30 C55 55 30 75 30 75Z" fill="currentColor"/>
+        <line x1="30" y1="75" x2="30" y2="20" stroke="#1a3a2e" stroke-width="1.5"/>
+      </svg>
+      <span class="loader-text">Terra Nova</span>
+      <div class="loader-bar"><div class="loader-progress"></div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       NAVIGATION
+  ═══════════════════════════════════════ -->
+  <nav id="navbar" role="navigation" aria-label="Main navigation">
+    <div class="nav-container">
+      <a href="#home" class="nav-logo" aria-label="Terra Nova home">
+        <svg class="logo-leaf" viewBox="0 0 32 42" fill="none">
+          <path d="M16 40 C16 40 2 30 2 16 C2 8 8 2 16 2 C24 2 30 8 30 16 C30 30 16 40 16 40Z" fill="currentColor"/>
+          <line x1="16" y1="40" x2="16" y2="10" stroke="#f5f0e8" stroke-width="1.2"/>
+        </svg>
+        <span>Terra Nova</span>
+      </a>
+
+      <ul class="nav-links" role="list">
+        <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#campaigns" class="nav-link">Campaigns</a></li>
+        <li><a href="#impact" class="nav-link">Impact</a></li>
+        <li><a href="#volunteer" class="nav-link">Volunteer</a></li>
+        <li><a href="#stories" class="nav-link">Stories</a></li>
+        <li><a href="ngo.html" class="nav-link">NGO Profile</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="donor-login.html" class="btn-donate" style="background:#d4a853;color:#1a3a2e;" id="donorNavBtn">Donor Login</a>
+        <a href="volunteer-login.html" class="btn-donate" style="background:#d4a853;color:#1a3a2e;" id="volNavBtn">Volunteer Login</a>
+        <a href="ngo-login.html" class="btn-donate" style="background:#d4a853;color:#1a3a2e;">NGO Login</a>
+        <a href="admin-login.html" class="btn-donate" style="background:#d4a853;color:#1a3a2e;">Admin Login</a>
+        <a href="#donate" class="btn-donate" style="background:#d4a853;color:#1a3a2e;">Donate Now</a>
+        <button class="nav-burger" id="navBurger" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <ul role="list">
+        <li><a href="#about" class="mobile-link">About</a></li>
+        <li><a href="#campaigns" class="mobile-link">Campaigns</a></li>
+        <li><a href="#impact" class="mobile-link">Impact</a></li>
+        <li><a href="#volunteer" class="mobile-link">Volunteer</a></li>
+        <li><a href="#stories" class="mobile-link">Stories</a></li>
+        <li><a href="ngo.html" class="mobile-link">NGO Profile</a></li>
+        <li><a href="#donate" class="mobile-link donate">Donate Now</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ═══════════════════════════════════════
+         HERO SECTION
+    ═══════════════════════════════════════ -->
+    <section id="home" class="hero" aria-label="Hero">
+      <div class="hero-bg">
+        <div class="hero-gradient-orb orb-1"></div>
+        <div class="hero-gradient-orb orb-2"></div>
+        <div class="hero-gradient-orb orb-3"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-noise"></div>
+      </div>
+
+      <div class="hero-content">
+        <div class="hero-badge reveal-up">
+          <span class="badge-dot"></span>
+          <span>Empowering 2.4M+ Lives Worldwide</span>
+        </div>
+
+        <h1 class="hero-title">
+          <span class="title-line reveal-up" style="--delay: 0.1s">The Earth</span>
+          <span class="title-line italic reveal-up" style="--delay: 0.2s">Needs Us</span>
+          <span class="title-line reveal-up" style="--delay: 0.3s">Right Now.</span>
+        </h1>
+
+        <p class="hero-subtitle reveal-up" style="--delay: 0.45s">
+          Terra Nova unites communities, protects ecosystems, and builds resilient futures —<br/>
+          one courageous action at a time.
+        </p>
+
+        <div class="hero-cta reveal-up" style="--delay: 0.55s">
+          <a href="#donate" class="btn-primary">
+            <span>Make a Difference</span>
+            <svg viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#about" class="btn-ghost">
+            <span>Our Mission</span>
+          </a>
+        </div>
+
+        <div class="hero-stats reveal-up" style="--delay: 0.65s">
+          <div class="hero-stat">
+            <span class="stat-num">142</span>
+            <span class="stat-label">Countries Reached</span>
+          </div>
+          <div class="stat-divider" aria-hidden="true"></div>
+          <div class="hero-stat">
+            <span class="stat-num">₹48M</span>
+            <span class="stat-label">Funds Raised</span>
+          </div>
+          <div class="stat-divider" aria-hidden="true"></div>
+          <div class="hero-stat">
+            <span class="stat-num">18K</span>
+            <span class="stat-label">Volunteers Active</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating cards -->
+      <div class="hero-float-cards" aria-hidden="true">
+        <div class="float-card card-a">
+          <div class="fc-icon">🌱</div>
+          <div class="fc-info">
+            <strong>Reforestation Drive</strong>
+            <span>Amazon Basin, Brazil</span>
+          </div>
+          <div class="fc-badge active">Live</div>
+        </div>
+        <div class="float-card card-b">
+          <div class="fc-icon">💧</div>
+          <div class="fc-info">
+            <strong>Clean Water Project</strong>
+            <span>Sub-Saharan Africa</span>
+          </div>
+          <div class="fc-badge">98% Funded</div>
+        </div>
+      </div>
+
+      <div class="hero-scroll-cue" aria-hidden="true">
+        <div class="scroll-line"></div>
+        <span>Scroll</span>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         ABOUT SECTION
+    ═══════════════════════════════════════ -->
+    <section id="about" class="about section-padding" aria-label="About Terra Nova">
+      <div class="container">
+
+        <div class="about-grid">
+          <div class="about-visual">
+            <div class="about-image-stack">
+              <div class="aimg aimg-1 scroll-reveal">
+                <div class="aimg-inner" style="background: linear-gradient(135deg, #1a3a2e 0%, #2d6a4f 50%, #52b788 100%);">
+                  <div class="aimg-overlay-text">Since 2008</div>
+                </div>
+              </div>
+              <div class="aimg aimg-2 scroll-reveal" data-delay="0.15">
+                <div class="aimg-inner" style="background: linear-gradient(135deg, #d4a853 0%, #e8c57a 100%);">
+                  <div class="aimg-icon">🌿</div>
+                </div>
+              </div>
+              <div class="about-badge-float scroll-reveal" data-delay="0.3">
+                <span class="abf-num">16</span>
+                <span class="abf-label">Years of<br/>Impact</span>
+              </div>
+            </div>
+
+            <div class="about-mission-card scroll-reveal" data-delay="0.2">
+              <div class="amc-label">Our Commitment</div>
+              <p>"We believe every human deserves clean air, clean water, and a thriving planet."</p>
+              <div class="amc-author">
+                <div class="amc-avatar">MR</div>
+                
+                <div>
+                  <strong>Maria Reyes</strong>
+                  <span>Founder & Executive Director</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="about-content">
+            <div class="section-eyebrow scroll-reveal">Our Story</div>
+            <h2 class="section-title scroll-reveal" data-delay="0.1">
+              Born from crisis,<br/>
+              <em>built for change.</em>
+            </h2>
+            <p class="about-body scroll-reveal" data-delay="0.2">
+              Terra Nova was founded in 2008 after witnessing the devastation of the Amazon drought and its ripple effects on indigenous communities. What began as a small team of 12 scientists and activists has grown into one of the world's most trusted environmental NGOs.
+            </p>
+            <p class="about-body scroll-reveal" data-delay="0.25">
+              We operate at the intersection of ecological restoration and human dignity — because you cannot save the earth without first caring for its people.
+            </p>
+
+            <div class="about-pillars scroll-reveal" data-delay="0.3">
+              <div class="pillar">
+                <div class="pillar-icon">🌍</div>
+                <div>
+                  <strong>Mission</strong>
+                  <p>Restore ecosystems and empower communities to thrive in balance with nature.</p>
+                </div>
+              </div>
+              <div class="pillar">
+                <div class="pillar-icon">🔭</div>
+                <div>
+                  <strong>Vision</strong>
+                  <p>A world where every community has the resources and knowledge to protect its environment.</p>
+                </div>
+              </div>
+              <div class="pillar">
+                <div class="pillar-icon">⚡</div>
+                <div>
+                  <strong>Values</strong>
+                  <p>Transparency, courage, science-led action, and radical inclusion at every level.</p>
+                </div>
+              </div>
+            </div>
+
+            <a href="#campaigns" class="btn-primary scroll-reveal" data-delay="0.4">
+              <span>Explore Our Work</span>
+              <svg viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         CAMPAIGNS SECTION
+    ═══════════════════════════════════════ -->
+    <section id="campaigns" class="campaigns section-padding" aria-label="Our Campaigns">
+      <div class="container">
+
+        <div class="section-header">
+          <div class="section-eyebrow scroll-reveal">Active Campaigns</div>
+          <h2 class="section-title scroll-reveal" data-delay="0.1">
+            Choose your<br/><em>cause.</em>
+          </h2>
+          <p class="section-subtitle scroll-reveal" data-delay="0.2">
+            Every campaign is backed by science, led by communities, and driven by accountability.
+          </p>
+        </div>
+
+        <!-- Filters -->
+        <div class="campaign-filters scroll-reveal" data-delay="0.25" role="group" aria-label="Filter campaigns">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="environment">Environment</button>
+          <button class="filter-btn" data-filter="water">Water</button>
+          <button class="filter-btn" data-filter="education">Education</button>
+          <button class="filter-btn" data-filter="health">Health</button>
+        </div>
+
+        <!-- Cards Grid -->
+        <div class="campaigns-grid" id="campaignsGrid">
+          <!-- Loaded dynamically from database -->
+          <div style="grid-column:1/-1;text-align:center;padding:40px 0">
+            <div style="width:36px;height:36px;border:3px solid rgba(255,255,255,0.15);border-top-color:#52b788;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto"></div>
+          </div>
+        </div>
+
+        <div class="campaigns-cta scroll-reveal">
+          <a href="#donate" class="btn-primary" id="viewAllCampaigns">View All Campaigns</a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         IMPACT SECTION
+    ═══════════════════════════════════════ -->
+    <section id="impact" class="impact section-padding" aria-label="Our Impact">
+      <div class="impact-bg" aria-hidden="true">
+        <div class="impact-orb"></div>
+      </div>
+      <div class="container">
+
+        <div class="section-header center">
+          <div class="section-eyebrow light scroll-reveal">Measured Results</div>
+          <h2 class="section-title light scroll-reveal" data-delay="0.1">
+            Numbers that<br/><em>tell the truth.</em>
+          </h2>
+        </div>
+
+        <div class="impact-counters">
+          <div class="counter-card scroll-reveal" data-delay="0.1">
+            <div class="counter-icon">🌳</div>
+            <div class="counter-num" data-target="12400000" data-suffix="M">0</div>
+            <div class="counter-label">Trees Planted</div>
+            <div class="counter-sub">Across 38 countries</div>
+          </div>
+          <div class="counter-card scroll-reveal" data-delay="0.2">
+            <div class="counter-icon">👥</div>
+            <div class="counter-num" data-target="2400000" data-suffix="M">0</div>
+            <div class="counter-label">Lives Impacted</div>
+            <div class="counter-sub">Direct beneficiaries</div>
+          </div>
+          <div class="counter-card scroll-reveal" data-delay="0.3">
+            <div class="counter-icon">💧</div>
+            <div class="counter-num" data-target="850000" data-suffix="K">0</div>
+            <div class="counter-label">Clean Water Access</div>
+            <div class="counter-sub">People newly served</div>
+          </div>
+          <div class="counter-card scroll-reveal" data-delay="0.4">
+            <div class="counter-icon">🌡️</div>
+            <div class="counter-num" data-target="42" data-suffix="K">0</div>
+            <div class="counter-label">Tonnes CO₂ Offset</div>
+            <div class="counter-sub">This year alone</div>
+          </div>
+          <div class="counter-card scroll-reveal" data-delay="0.5">
+            <div class="counter-icon">🏫</div>
+            <div class="counter-num" data-target="1240" data-suffix="">0</div>
+            <div class="counter-label">Schools Built</div>
+            <div class="counter-sub">Fully operational</div>
+          </div>
+          <div class="counter-card scroll-reveal" data-delay="0.6">
+            <div class="counter-icon">🌐</div>
+            <div class="counter-num" data-target="142" data-suffix="">0</div>
+            <div class="counter-label">Countries Active</div>
+            <div class="counter-sub">Global network</div>
+          </div>
+        </div>
+
+        <!-- Impact Timeline -->
+        <div class="impact-timeline scroll-reveal" data-delay="0.2">
+          <h3 class="timeline-title">Our Journey</h3>
+          <div class="timeline-track">
+            <div class="tl-item">
+              <div class="tl-year">2008</div>
+              <div class="tl-dot"></div>
+              <div class="tl-content">Founded in São Paulo with 12 members</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-year">2011</div>
+              <div class="tl-dot"></div>
+              <div class="tl-content">First million trees planted</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-year">2015</div>
+              <div class="tl-dot"></div>
+              <div class="tl-content">UN Partnership signed, 50 countries</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-year">2018</div>
+              <div class="tl-dot"></div>
+              <div class="tl-content">1 million people reached with clean water</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-year">2022</div>
+              <div class="tl-dot"></div>
+              <div class="tl-content">$48M in funding, 142 nations</div>
+            </div>
+            <div class="tl-item active">
+              <div class="tl-year">Now</div>
+              <div class="tl-dot"></div>
+              <div class="tl-content">2.4M lives impacted. Growing daily.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         DONATION SECTION
+    ═══════════════════════════════════════ -->
+    <section id="donate" class="donate section-padding" aria-label="Donate">
+      <div class="container">
+        <div class="donate-grid">
+
+          <div class="donate-left">
+            <div class="section-eyebrow scroll-reveal">Make an Impact</div>
+            <h2 class="section-title scroll-reveal" data-delay="0.1">
+              Your donation<br/><em>moves mountains.</em>
+            </h2>
+            <p class="donate-desc scroll-reveal" data-delay="0.2">
+              100% of every rupee goes directly to our programs. We are rated 4-star by Charity Navigator and hold the Platinum GuideStar seal.
+            </p>
+
+            <div class="donate-trust scroll-reveal" data-delay="0.3">
+              <div class="trust-item">
+                <div class="trust-icon">⭐</div>
+                <div>
+                  <strong>4-Star Rating</strong>
+                  <span>Charity Navigator</span>
+                </div>
+              </div>
+              <div class="trust-item">
+                <div class="trust-icon">🛡️</div>
+                <div>
+                  <strong>Platinum Seal</strong>
+                  <span>GuideStar</span>
+                </div>
+              </div>
+              <div class="trust-item">
+                <div class="trust-icon">🔒</div>
+                <div>
+                  <strong>SSL Secured</strong>
+                  <span>256-bit encryption</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="impact-equivalents scroll-reveal" data-delay="0.35">
+              <div class="impact-preview-label">Your donation impact</div>
+              <div class="impact-eq" id="impactEq">
+                <span class="eq-icon">🌱</span>
+                <span class="eq-text">₹250 plants 5 trees in the Amazon</span>
+              </div>
+              <div class="impact-breakdown" id="impactBreakdown">
+                <div class="ib-item"><span class="ib-num" id="ibNum1">5</span><span class="ib-label" id="ibLabel1">trees planted</span></div>
+                <div class="ib-sep">·</div>
+                <div class="ib-item"><span class="ib-num" id="ibNum2">3</span><span class="ib-label" id="ibLabel2">children helped</span></div>
+                <div class="ib-sep">·</div>
+                <div class="ib-item"><span class="ib-num" id="ibNum3">1</span><span class="ib-label" id="ibLabel3">family reached</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="donate-right scroll-reveal" data-delay="0.15">
+            <div class="donate-card">
+              <div class="donate-tabs">
+                <button class="donate-tab active" data-freq="once">Give Once</button>
+                <button class="donate-tab" data-freq="monthly">Monthly</button>
+                <button class="donate-tab" data-freq="annual">Annual</button>
+              </div>
+
+              <div class="amount-grid" id="amountGrid">
+                <button class="amount-btn" data-amount="100">₹100</button>
+                <button class="amount-btn" data-amount="250">₹250</button>
+                <button class="amount-btn active" data-amount="500">₹500</button>
+                <button class="amount-btn" data-amount="1000">₹1,000</button>
+                <button class="amount-btn" data-amount="2500">₹2,500</button>
+                <button class="amount-btn" data-amount="5000">₹5,000</button>
+              </div>
+
+              <div class="custom-amount-wrap">
+                <label for="customAmount">Custom Amount</label>
+                <div class="custom-input-group">
+                  <span class="currency-symbol">₹</span>
+                  <input type="number" id="customAmount" placeholder="Enter amount" min="1" aria-label="Custom donation amount" />
+                </div>
+              </div>
+
+              <div class="campaign-select-wrap">
+                <label for="campaignSelect">Direct to Campaign (optional)</label>
+                <select id="campaignSelect">
+                  <option value="">Where it's needed most</option>
+                  <option value="amazon">Amazon Reforestation</option>
+                  <option value="water">Clean Water for 1 Million</option>
+                  <option value="schools">Schools in the Sahel</option>
+                  <option value="health">Mobile Health Clinics</option>
+                  <option value="ocean">Ocean Plastic Recovery</option>
+                </select>
+              </div>
+
+              <div class="donate-total">
+                <span>Your contribution:</span>
+                <strong id="donateTotal">₹500</strong>
+              </div>
+
+              <button class="btn-donate-now" id="donateNowBtn" onclick="handleDonate()">
+                <span id="donateBtnText">Donate ₹500 Now</span>
+                <svg viewBox="0 0 20 20" fill="none"><path d="M10 3.5C10 3.5 5 7 5 12a5 5 0 0010 0C15 7 10 3.5 10 3.5z" stroke="currentColor" stroke-width="1.5"/></svg>
+              </button>
+
+              <div id="donorStatusBar"></div>
+
+              <p class="donate-legal">Secure payment. 80G Tax exemption available.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         VOLUNTEER SECTION
+    ═══════════════════════════════════════ -->
+    <section id="volunteer" class="volunteer section-padding" aria-label="Volunteer">
+      <div class="volunteer-bg" aria-hidden="true"></div>
+      <div class="container">
+        <div class="volunteer-grid">
+
+          <div class="volunteer-content">
+            <div class="section-eyebrow scroll-reveal">Join the Movement</div>
+            <h2 class="section-title scroll-reveal" data-delay="0.1">
+              Become the<br/><em>change agent.</em>
+            </h2>
+            <p class="vol-desc scroll-reveal" data-delay="0.2">
+              Whether you have 2 hours or 20 years — there's a role for you. Our volunteers are the heartbeat of Terra Nova.
+            </p>
+            <a href="volunteer-hours.html" class="btn-ghost scroll-reveal" style="display:inline-flex;align-items:center;gap:8px;margin-bottom:16px;--delay:0.22s" data-delay="0.22">
+              <span>⏱ Track Your Volunteer Hours</span>
+            </a>
+
+            <div class="vol-roles scroll-reveal" data-delay="0.25">
+              <div class="vol-role">
+                <span class="vr-dot field"></span>
+                <div>
+                  <strong>Field Volunteer</strong>
+                  <p>On-ground restoration, planting, and community programs</p>
+                </div>
+              </div>
+              <div class="vol-role">
+                <span class="vr-dot digital"></span>
+                <div>
+                  <strong>Digital Advocate</strong>
+                  <p>Social media, content creation, and online campaigns</p>
+                </div>
+              </div>
+              <div class="vol-role">
+                <span class="vr-dot expert"></span>
+                <div>
+                  <strong>Expert Consultant</strong>
+                  <p>Pro-bono expertise: law, medicine, engineering, finance</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="volunteer-form-wrap scroll-reveal" data-delay="0.15">
+            <form class="vol-form" id="volForm" novalidate>
+              <h3>Apply to Volunteer</h3>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="volFirst">First Name *</label>
+                  <input type="text" id="volFirst" name="firstName" required autocomplete="given-name" />
+                  <span class="form-error" aria-live="polite"></span>
+                </div>
+                <div class="form-group">
+                  <label for="volLast">Last Name *</label>
+                  <input type="text" id="volLast" name="lastName" required autocomplete="family-name" />
+                  <span class="form-error" aria-live="polite"></span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="volEmail">Email Address *</label>
+                <input type="email" id="volEmail" name="email" required autocomplete="email" />
+                <span class="form-error" aria-live="polite"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="volPhone">Phone (optional)</label>
+                <input type="tel" id="volPhone" name="phone" autocomplete="tel" />
+              </div>
+
+              <div class="form-group">
+                <label for="volRole">Volunteer Role *</label>
+                <select id="volRole" name="role" required>
+                  <option value="">Select your role</option>
+                  <option value="field">Field Volunteer</option>
+                  <option value="digital">Digital Advocate</option>
+                  <option value="expert">Expert Consultant</option>
+                  <option value="fundraiser">Fundraiser</option>
+                  <option value="educator">Educator/Trainer</option>
+                </select>
+                <span class="form-error" aria-live="polite"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="volMessage">Why do you want to volunteer?</label>
+                <textarea id="volMessage" name="message" rows="3" placeholder="Tell us what drives you..."></textarea>
+              </div>
+
+              <div class="form-check">
+                <input type="checkbox" id="volConsent" name="consent" required />
+                <label for="volConsent">I agree to the <a href="#">privacy policy</a> and consent to being contacted. *</label>
+                <span class="form-error" aria-live="polite"></span>
+              </div>
+
+              <button type="submit" class="btn-primary full-width">
+                <span>Submit Application</span>
+                <svg viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+
+              <div class="form-success" id="formSuccess" aria-live="polite" role="status">
+                <div class="success-icon">✅</div>
+                <strong>Application received!</strong>
+                <p>We'll be in touch within 48 hours.</p>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         TESTIMONIALS / STORIES
+    ═══════════════════════════════════════ -->
+    <section id="stories" class="stories section-padding" aria-label="Stories">
+      <div class="container">
+        <div class="section-header center">
+          <div class="section-eyebrow scroll-reveal">Real Stories</div>
+          <h2 class="section-title scroll-reveal" data-delay="0.1">
+            Voices from<br/><em>the ground.</em>
+          </h2>
+        </div>
+
+        <div class="stories-carousel-wrap">
+          <div class="stories-carousel" id="storiesCarousel">
+
+            <div class="story-card">
+              <div class="story-quote-mark">"</div>
+              <p class="story-text">Terra Nova didn't just plant trees in our village — they taught us how to protect them. Three years later, our water source has returned. My children drink clean water for the first time.</p>
+              <div class="story-author">
+                <div class="story-avatar" style="background: linear-gradient(135deg, #1a3a2e, #52b788);">AK</div>
+                <div>
+                  <strong>Amara Keita</strong>
+                  <span>Farmer, Mali</span>
+                </div>
+                <div class="story-campaign-tag">🌳 Reforestation</div>
+              </div>
+            </div>
+
+            <div class="story-card">
+              <div class="story-quote-mark">"</div>
+              <p class="story-text">Before the clinic came to our village, the nearest doctor was 6 hours away. Now my daughter gets her checkups regularly. I cannot describe what this means to a mother.</p>
+              <div class="story-author">
+                <div class="story-avatar" style="background: linear-gradient(135deg, #7b1e1e, #c0392b);">FO</div>
+                <div>
+                  <strong>Fatima Ouédraogo</strong>
+                  <span>Mother, Burkina Faso</span>
+                </div>
+                <div class="story-campaign-tag">🏥 Mobile Health</div>
+              </div>
+            </div>
+
+            <div class="story-card">
+              <div class="story-quote-mark">"</div>
+              <p class="story-text">I volunteered for 3 weeks in Brazil and came back a completely changed person. Terra Nova's field program is the most professionally run operation I've ever been part of.</p>
+              <div class="story-author">
+                <div class="story-avatar" style="background: linear-gradient(135deg, #4a1942, #8e44ad);">JL</div>
+                <div>
+                  <strong>James Liu</strong>
+                  <span>Volunteer, Singapore</span>
+                </div>
+                <div class="story-campaign-tag">🙋 Volunteer</div>
+              </div>
+            </div>
+
+            <div class="story-card">
+              <div class="story-quote-mark">"</div>
+              <p class="story-text">The Himalayan Glacier Watch project is scientifically rigorous and community-driven. As a glaciologist, I've partnered with many NGOs — Terra Nova's data integrity is world-class.</p>
+              <div class="story-author">
+                <div class="story-avatar" style="background: linear-gradient(135deg, #0a2e3d, #117a8b);">DR</div>
+                <div>
+                  <strong>Dr. Priya Sharma</strong>
+                  <span>Glaciologist, India</span>
+                </div>
+                <div class="story-campaign-tag">🏔️ Glacier Watch</div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="carousel-controls">
+            <button class="carousel-btn prev" id="storyPrev" aria-label="Previous story">
+              <svg viewBox="0 0 20 20" fill="none"><path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="carousel-dots" id="carouselDots"></div>
+            <button class="carousel-btn next" id="storyNext" aria-label="Next story">
+              <svg viewBox="0 0 20 20" fill="none"><path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         PARTNERS SECTION
+    ═══════════════════════════════════════ -->
+    <section class="partners section-padding-sm" aria-label="Our Partners">
+      <div class="container">
+        <div class="partners-header scroll-reveal">
+          <span>Trusted by global leaders</span>
+        </div>
+        <div class="partners-track">
+          <div class="partners-inner">
+            <div class="partner-logo">UNICEF</div>
+            <div class="partner-logo">WWF</div>
+            <div class="partner-logo">UN Environment</div>
+            <div class="partner-logo">World Bank</div>
+            <div class="partner-logo">Greenpeace</div>
+            <div class="partner-logo">Bill Gates Foundation</div>
+            <div class="partner-logo">NASA</div>
+            <div class="partner-logo">Red Cross</div>
+            <!-- Duplicate for infinite loop -->
+            <div class="partner-logo" aria-hidden="true">UNICEF</div>
+            <div class="partner-logo" aria-hidden="true">WWF</div>
+            <div class="partner-logo" aria-hidden="true">UN Environment</div>
+            <div class="partner-logo" aria-hidden="true">World Bank</div>
+            <div class="partner-logo" aria-hidden="true">Greenpeace</div>
+            <div class="partner-logo" aria-hidden="true">Bill Gates Foundation</div>
+            <div class="partner-logo" aria-hidden="true">NASA</div>
+            <div class="partner-logo" aria-hidden="true">Red Cross</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════ -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-top">
+      <div class="container">
+        <div class="footer-grid">
+
+          <div class="footer-brand">
+            <a href="#home" class="nav-logo footer-logo" aria-label="Terra Nova">
+              <svg class="logo-leaf" viewBox="0 0 32 42" fill="none">
+                <path d="M16 40 C16 40 2 30 2 16 C2 8 8 2 16 2 C24 2 30 8 30 16 C30 30 16 40 16 40Z" fill="currentColor"/>
+                <line x1="16" y1="40" x2="16" y2="10" stroke="#1a3a2e" stroke-width="1.2"/>
+              </svg>
+              <span>Terra Nova</span>
+            </a>
+            <p>Empowering communities, restoring ecosystems, and building futures — one courageous action at a time.</p>
+            <div class="footer-social">
+              <a href="#" aria-label="Twitter" class="social-btn">𝕏</a>
+              <a href="#" aria-label="Instagram" class="social-btn">📷</a>
+              <a href="#" aria-label="LinkedIn" class="social-btn">in</a>
+              <a href="#" aria-label="Facebook" class="social-btn">f</a>
+              <a href="#" aria-label="YouTube" class="social-btn">▶</a>
+            </div>
+          </div>
+
+          <div class="footer-col">
+            <h4>Our Work</h4>
+            <ul>
+              <li><a href="#campaigns">Active Campaigns</a></li>
+              <li><a href="#impact">Impact Report</a></li>
+              <li><a href="#">Field Projects</a></li>
+              <li><a href="#">Research & Data</a></li>
+              <li><a href="#">Annual Report</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>Get Involved</h4>
+            <ul>
+              <li><a href="#donate">Donate</a></li>
+              <li><a href="#volunteer">Volunteer</a></li>
+              <li><a href="#">Corporate Partners</a></li>
+              <li><a href="#">Planned Giving</a></li>
+              <li><a href="#">Ambassador Program</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>About</h4>
+            <ul>
+              <li><a href="#about">Our Story</a></li>
+              <li><a href="#">Leadership Team</a></li>
+              <li><a href="#">Financials</a></li>
+              <li><a href="#">Press Room</a></li>
+              <li><a href="#">Careers</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-newsletter">
+            <h4>Stay Informed</h4>
+            <p>Monthly impact reports, no spam ever.</p>
+            <form class="nl-form" id="nlForm" novalidate>
+              <div class="nl-input-wrap">
+                <input type="email" placeholder="your@email.com" id="nlEmail" aria-label="Newsletter email" required />
+                <button type="submit" aria-label="Subscribe">
+                  <svg viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+              <span class="nl-status" id="nlStatus" aria-live="polite"></span>
+            </form>
+            <div class="footer-certifications">
+              <span class="cert">⭐ 4-Star Charity</span>
+              <span class="cert">🛡️ GuideStar Platinum</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container">
+        <p>© 2024 Terra Nova Foundation. All rights reserved. | Registered NGO #1234567</p>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Use</a>
+          <a href="#">Cookie Settings</a>
+          <a href="leaderboard.html">Donor Leaderboard</a>
+          <a href="admin-login.html" style="opacity:0.5;">Admin</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Donation Toast -->
+  <div class="toast" id="donateToast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-inner">
+      <span class="toast-icon">💚</span>
+      <div class="toast-text">
+        <strong id="toastTitle">Thank you!</strong>
+        <span id="toastMsg">Your donation is making waves.</span>
+      </div>
+      <button class="toast-close" onclick="closeToast()" aria-label="Dismiss notification">×</button>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+  <script>
+    // Swap Donor Login button to My Dashboard if logged in
+    (function() {
+      const btn = document.getElementById('donorNavBtn');
+      if (btn && localStorage.getItem('donor_token')) {
+        btn.textContent = '👤 My Dashboard';
+        btn.href = 'donor-dashboard.html';
+      }
+      const vBtn = document.getElementById('volNavBtn');
+      if (vBtn && localStorage.getItem('vol_token')) {
+        vBtn.textContent = '🙋 Vol. Dashboard';
+        vBtn.href = 'volunteer-dashboard.html';
+      }
+    })();
+  </script>
+</body>
+</html>

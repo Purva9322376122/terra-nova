@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terra Nova NGO — Our Organisation Profile</title>
+  <meta name="description" content="Learn about Terra Nova NGO — our mission, team, active campaigns, and global impact since 2008." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* ── NGO Profile Page — Extra Styles ───────────────── */
+    .ngo-hero {
+      min-height: 420px;
+      background: linear-gradient(135deg, #1a3a2e 0%, #2d6a4f 60%, #52b788 100%);
+      display: flex;
+      align-items: flex-end;
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .ngo-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 80% 40%, rgba(212,168,83,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 10% 80%, rgba(82,183,136,0.25) 0%, transparent 60%);
+    }
+    .ngo-hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .ngo-hero-inner {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 120px var(--sp-2xl) var(--sp-3xl);
+    }
+    .ngo-back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: rgba(245,240,232,0.65);
+      font-size: 0.82rem;
+      text-decoration: none;
+      margin-bottom: var(--sp-xl);
+      transition: color 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .ngo-back-link:hover { color: var(--c-ivory); }
+    .ngo-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: var(--c-gold-light);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: var(--sp-lg);
+    }
+    .ngo-hero-badge span { width: 6px; height: 6px; background: var(--c-gold-light); border-radius: 50%; }
+    .ngo-hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 700;
+      color: var(--c-ivory);
+      line-height: 1.1;
+      margin-bottom: var(--sp-lg);
+    }
+    .ngo-hero-title em {
+      font-style: italic;
+      color: var(--c-gold-light);
+    }
+    .ngo-hero-desc {
+      font-size: 1.05rem;
+      color: rgba(245,240,232,0.72);
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: var(--sp-xl);
+    }
+    .ngo-hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--sp-xl);
+    }
+    .ngo-hero-stat {
+      display: flex;
+      flex-direction: column;
+    }
+    .ngo-hero-stat strong {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--c-ivory);
+      line-height: 1;
+    }
+    .ngo-hero-stat span {
+      font-size: 0.75rem;
+      color: rgba(245,240,232,0.55);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .ngo-hero-divider { width: 1px; background: rgba(255,255,255,0.15); margin: 0; }
+
+    /* ── Page Body ─────────────────────────────────────── */
+    .ngo-body {
+      background: var(--c-ivory);
+      padding-bottom: var(--sp-3xl);
+    }
+
+    /* ── Profile Card ──────────────────────────────────── */
+    .ngo-profile-card {
+      background: var(--c-white);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      border: 1px solid var(--c-ivory-mid);
+      max-width: 1100px;
+      margin: -60px auto 0;
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      overflow: hidden;
+    }
+    .npc-item {
+      padding: var(--sp-xl) var(--sp-2xl);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      border-right: 1px solid var(--c-ivory-dark);
+    }
+    .npc-item:last-child { border-right: none; }
+    .npc-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--c-muted);
+    }
+    .npc-value {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--c-forest);
+    }
+    .npc-sub {
+      font-size: 0.78rem;
+      color: var(--c-muted);
+    }
+    .npc-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(82,183,136,0.1);
+      color: var(--c-forest-mid);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 100px;
+      border: 1px solid rgba(82,183,136,0.2);
+      margin-top: 4px;
+      width: fit-content;
+    }
+
+    /* ── Content Layout ────────────────────────────────── */
+    .ngo-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: var(--sp-3xl) var(--sp-2xl) 0;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: var(--sp-3xl);
+    }
+    .ngo-main {}
+    .ngo-sidebar {}
+
+    /* ── Section headings ──────────────────────────────── */
+    .ngo-section { margin-bottom: var(--sp-3xl); }
+    .ngo-section-title {
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--c-forest);
+      margin-bottom: var(--sp-lg);
+      padding-bottom: var(--sp-sm);
+      border-bottom: 2px solid var(--c-ivory-dark);
+    }
+
+    /* ── Mission block ─────────────────────────────────── */
+    .ngo-mission-text {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--c-ink-mid);
+      margin-bottom: var(--sp-lg);
+    }
+    .ngo-values-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-md);
+      margin-top: var(--sp-lg);
+    }
+    .ngo-value-card {
+      background: var(--c-ivory);
+      border: 1px solid var(--c-ivory-dark);
+      border-radius: var(--radius-lg);
+      padding: var(--sp-md) var(--sp-lg);
+      display: flex;
+      gap: var(--sp-sm);
+      align-items: flex-start;
+    }
+    .nvc-icon { font-size: 1.2rem; margin-top: 1px; }
+    .nvc-body strong { display: block; font-size: 0.88rem; font-weight: 600; color: var(--c-forest); }
+    .nvc-body p { font-size: 0.8rem; color: var(--c-muted); line-height: 1.5; margin-top: 3px; }
+
+    /* ── Campaigns list ────────────────────────────────── */
+    .ngo-campaign-row {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-md);
+      padding: var(--sp-md) 0;
+      border-bottom: 1px solid var(--c-ivory-dark);
+    }
+    .ngo-campaign-row:last-child { border-bottom: none; }
+    .ncr-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .ncr-info { flex: 1; min-width: 0; }
+    .ncr-name { font-size: 0.9rem; font-weight: 600; color: var(--c-forest); }
+    .ncr-status { font-size: 0.75rem; color: var(--c-muted); margin-top: 2px; }
+    .ncr-bar-wrap { width: 100px; flex-shrink: 0; }
+    .ncr-bar {
+      height: 4px;
+      background: var(--c-ivory-dark);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    .ncr-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--c-forest-mid), var(--c-forest-light));
+      border-radius: 100px;
+    }
+    .ncr-pct { font-size: 0.72rem; color: var(--c-forest-mid); font-weight: 600; text-align: right; margin-top: 3px; }
+
+    /* ── Team ──────────────────────────────────────────── */
+    .ngo-team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-md);
+    }
+    .ngo-team-card {
+      background: var(--c-ivory);
+      border: 1px solid var(--c-ivory-dark);
+      border-radius: var(--radius-lg);
+      padding: var(--sp-lg);
+      text-align: center;
+      transition: all var(--t-mid) var(--ease-out-expo);
+    }
+    .ngo-team-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+    .ntc-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      margin: 0 auto var(--sp-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--c-ivory);
+    }
+    .ntc-name { font-size: 0.88rem; font-weight: 600; color: var(--c-forest); }
+    .ntc-role { font-size: 0.73rem; color: var(--c-muted); margin-top: 2px; line-height: 1.4; }
+
+    /* ── Sidebar ───────────────────────────────────────── */
+    .ngo-stat-cards { display: flex; flex-direction: column; gap: var(--sp-md); }
+    .ngo-stat-card {
+      background: var(--c-white);
+      border: 1px solid var(--c-ivory-dark);
+      border-radius: var(--radius-lg);
+      padding: var(--sp-lg) var(--sp-xl);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-md);
+    }
+    .nsc-icon { font-size: 1.6rem; }
+    .nsc-num {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--c-forest);
+      line-height: 1;
+    }
+    .nsc-label { font-size: 0.75rem; color: var(--c-muted); margin-top: 3px; }
+
+    .ngo-certifications {
+      background: var(--c-white);
+      border: 1px solid var(--c-ivory-dark);
+      border-radius: var(--radius-lg);
+      padding: var(--sp-lg) var(--sp-xl);
+      margin-top: var(--sp-md);
+    }
+    .ngo-certifications h4 {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--c-muted);
+      margin-bottom: var(--sp-md);
+    }
+    .cert-row {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-sm);
+      padding: var(--sp-sm) 0;
+      border-bottom: 1px solid var(--c-ivory-dark);
+    }
+    .cert-row:last-child { border-bottom: none; }
+    .cert-row-icon { font-size: 1.1rem; }
+    .cert-row-text strong { display: block; font-size: 0.82rem; font-weight: 600; color: var(--c-forest); }
+    .cert-row-text span { font-size: 0.73rem; color: var(--c-muted); }
+
+    .ngo-cta-box {
+      background: linear-gradient(135deg, var(--c-forest), var(--c-forest-mid));
+      border-radius: var(--radius-lg);
+      padding: var(--sp-xl);
+      margin-top: var(--sp-md);
+      text-align: center;
+    }
+    .ngo-cta-box h4 {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--c-ivory);
+      margin-bottom: var(--sp-sm);
+    }
+    .ngo-cta-box p {
+      font-size: 0.8rem;
+      color: rgba(245,240,232,0.65);
+      line-height: 1.5;
+      margin-bottom: var(--sp-lg);
+    }
+    .ngo-cta-box a {
+      display: inline-block;
+      background: var(--c-gold);
+      color: var(--c-forest);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 10px 24px;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .ngo-cta-box a:hover { background: var(--c-gold-light); }
+
+    /* ── Responsive ────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .ngo-profile-card { grid-template-columns: 1fr; }
+      .npc-item { border-right: none; border-bottom: 1px solid var(--c-ivory-dark); }
+      .npc-item:last-child { border-bottom: none; }
+      .ngo-content { grid-template-columns: 1fr; }
+      .ngo-values-grid { grid-template-columns: 1fr; }
+      .ngo-team-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 540px) {
+      .ngo-hero-inner { padding-top: 100px; }
+      .ngo-team-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar" role="navigation" aria-label="Main navigation">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo" aria-label="Terra Nova home">
+        <svg class="logo-leaf" viewBox="0 0 32 42" fill="none">
+          <path d="M16 40 C16 40 2 30 2 16 C2 8 8 2 16 2 C24 2 30 8 30 16 C30 30 16 40 16 40Z" fill="currentColor"/>
+          <line x1="16" y1="40" x2="16" y2="10" stroke="#f5f0e8" stroke-width="1.2"/>
+        </svg>
+        <span>Terra Nova</span>
+      </a>
+      <ul class="nav-links" role="list">
+        <li><a href="index.html#about" class="nav-link">About</a></li>
+        <li><a href="index.html#campaigns" class="nav-link">Campaigns</a></li>
+        <li><a href="index.html#impact" class="nav-link">Impact</a></li>
+        <li><a href="index.html#volunteer" class="nav-link">Volunteer</a></li>
+        <li><a href="index.html#stories" class="nav-link">Stories</a></li>
+        <li><a href="ngo.html" class="nav-link active-nav">NGO Profile</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="index.html#donate" class="btn-donate">Donate Now</a>
+        <button class="nav-burger" id="navBurger" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <ul role="list">
+        <li><a href="index.html#about" class="mobile-link">About</a></li>
+        <li><a href="index.html#campaigns" class="mobile-link">Campaigns</a></li>
+        <li><a href="index.html#impact" class="mobile-link">Impact</a></li>
+        <li><a href="index.html#volunteer" class="mobile-link">Volunteer</a></li>
+        <li><a href="index.html#stories" class="mobile-link">Stories</a></li>
+        <li><a href="ngo.html" class="mobile-link">NGO Profile</a></li>
+        <li><a href="index.html#donate" class="mobile-link donate">Donate Now</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="ngo-hero" aria-label="NGO Profile Hero">
+    <div class="ngo-hero-grid" aria-hidden="true"></div>
+    <div class="ngo-hero-inner">
+      <a href="index.html" class="ngo-back-link">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Back to main site
+      </a>
+      <div class="ngo-hero-badge"><span></span>Verified NGO · Est. 2008</div>
+      <h1 class="ngo-hero-title">Terra Nova<br/><em>Foundation</em></h1>
+      <p class="ngo-hero-desc">
+        A global environmental and humanitarian NGO uniting communities, restoring ecosystems, and building resilient futures — one courageous action at a time.
+      </p>
+      <div class="ngo-hero-meta">
+        <div class="ngo-hero-stat"><strong>16+</strong><span>Years active</span></div>
+        <div class="ngo-hero-divider"></div>
+        <div class="ngo-hero-stat"><strong>142</strong><span>Countries</span></div>
+        <div class="ngo-hero-divider"></div>
+        <div class="ngo-hero-stat"><strong>2.4M+</strong><span>Lives impacted</span></div>
+        <div class="ngo-hero-divider"></div>
+        <div class="ngo-hero-stat"><strong>₹48M</strong><span>Funds raised</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROFILE CARD -->
+  <div class="ngo-body">
+    <div class="ngo-profile-card scroll-reveal">
+      <div class="npc-item">
+        <div class="npc-label">Organisation Type</div>
+        <div class="npc-value">Non-Governmental Organisation</div>
+        <div class="npc-sub">Registered NGO · #1234567</div>
+        <div class="npc-badge">✓ Verified</div>
+      </div>
+      <div class="npc-item">
+        <div class="npc-label">Headquarters</div>
+        <div class="npc-value">São Paulo, Brazil</div>
+        <div class="npc-sub">Global offices in 12 countries</div>
+      </div>
+      <div class="npc-item">
+        <div class="npc-label">Focus Areas</div>
+        <div class="npc-value">Environment · Water · Education · Health</div>
+        <div class="npc-sub">Science-led, community-driven</div>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="ngo-content">
+
+      <!-- LEFT: Main -->
+      <div class="ngo-main">
+
+        <!-- Mission -->
+        <div class="ngo-section scroll-reveal">
+          <h2 class="ngo-section-title">Our Mission</h2>
+          <p class="ngo-mission-text">
+            Terra Nova was founded in 2008 after witnessing the devastating Amazon drought and its cascading effects on indigenous communities. What began as a team of 12 scientists and activists has grown into one of the world's most trusted environmental NGOs — operating in 142 countries and touching the lives of over 2.4 million people.
+          </p>
+          <p class="ngo-mission-text">
+            We operate at the intersection of <strong>ecological restoration</strong> and <strong>human dignity</strong> — because you cannot save the earth without first caring for its people. Every programme we run is science-led, community-driven, and held to rigorous transparency standards.
+          </p>
+          <div class="ngo-values-grid">
+            <div class="ngo-value-card">
+              <div class="nvc-icon">🌍</div>
+              <div class="nvc-body">
+                <strong>Mission</strong>
+                <p>Restore ecosystems and empower communities to thrive in balance with nature.</p>
+              </div>
+            </div>
+            <div class="ngo-value-card">
+              <div class="nvc-icon">🔭</div>
+              <div class="nvc-body">
+                <strong>Vision</strong>
+                <p>A world where every community can protect its own environment.</p>
+              </div>
+            </div>
+            <div class="ngo-value-card">
+              <div class="nvc-icon">⚡</div>
+              <div class="nvc-body">
+                <strong>Values</strong>
+                <p>Transparency, science-led action, and radical inclusion at every level.</p>
+              </div>
+            </div>
+            <div class="ngo-value-card">
+              <div class="nvc-icon">🤝</div>
+              <div class="nvc-body">
+                <strong>Accountability</strong>
+                <p>100% of donations go to programmes. Rated 4-star by Charity Navigator.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Campaigns -->
+        <div class="ngo-section scroll-reveal" data-delay="0.1">
+          <h2 class="ngo-section-title">Active Campaigns</h2>
+
+          <div class="ngo-campaign-row">
+            <div class="ncr-icon" style="background: linear-gradient(135deg,#1a3a2e,#52b788);">🌳</div>
+            <div class="ncr-info">
+              <div class="ncr-name">Amazon Reforestation Initiative</div>
+              <div class="ncr-status">Environment · 42 days left · 4,821 donors · 🔥 Urgent</div>
+            </div>
+            <div class="ncr-bar-wrap">
+              <div class="ncr-bar"><div class="ncr-fill" style="width:80%"></div></div>
+              <div class="ncr-pct">80%</div>
+            </div>
+          </div>
+
+          <div class="ngo-campaign-row">
+            <div class="ncr-icon" style="background: linear-gradient(135deg,#1b4f72,#2e86c1);">💧</div>
+            <div class="ncr-info">
+              <div class="ncr-name">Clean Water for 1 Million</div>
+              <div class="ncr-status">Water · 7 days left · 12,304 donors · ⚡ Almost Done</div>
+            </div>
+            <div class="ncr-bar-wrap">
+              <div class="ncr-bar"><div class="ncr-fill" style="width:98%"></div></div>
+              <div class="ncr-pct">98%</div>
+            </div>
+          </div>
+
+          <div class="ngo-campaign-row">
+            <div class="ncr-icon" style="background: linear-gradient(135deg,#4a1942,#8e44ad);">📚</div>
+            <div class="ncr-info">
+              <div class="ncr-name">Schools in the Sahel</div>
+              <div class="ncr-status">Education · 90 days left · 2,180 donors · 🌟 Needs Help</div>
+            </div>
+            <div class="ncr-bar-wrap">
+              <div class="ncr-bar"><div class="ncr-fill" style="width:44%"></div></div>
+              <div class="ncr-pct">44%</div>
+            </div>
+          </div>
+
+          <div class="ngo-campaign-row">
+            <div class="ncr-icon" style="background: linear-gradient(135deg,#7b1e1e,#c0392b);">🏥</div>
+            <div class="ncr-info">
+              <div class="ncr-name">Mobile Health Clinics</div>
+              <div class="ncr-status">Health · 60 days left · 5,640 donors · 🔥 Urgent</div>
+            </div>
+            <div class="ncr-bar-wrap">
+              <div class="ncr-bar"><div class="ncr-fill" style="width:67%"></div></div>
+              <div class="ncr-pct">67%</div>
+            </div>
+          </div>
+
+          <div class="ngo-campaign-row">
+            <div class="ncr-icon" style="background: linear-gradient(135deg,#0d4f3a,#1a8c6c);">🐋</div>
+            <div class="ncr-info">
+              <div class="ncr-name">Ocean Plastic Recovery</div>
+              <div class="ncr-status">Environment · 120 days left · 8,902 donors · 🌟 Needs Help</div>
+            </div>
+            <div class="ncr-bar-wrap">
+              <div class="ncr-bar"><div class="ncr-fill" style="width:62%"></div></div>
+              <div class="ncr-pct">62%</div>
+            </div>
+          </div>
+
+          <div class="ngo-campaign-row">
+            <div class="ncr-icon" style="background: linear-gradient(135deg,#0a2e3d,#117a8b);">🏔️</div>
+            <div class="ncr-info">
+              <div class="ncr-name">Himalayan Glacier Watch</div>
+              <div class="ncr-status">Water · 75 days left · 3,210 donors · 🌟 Needs Help</div>
+            </div>
+            <div class="ncr-bar-wrap">
+              <div class="ncr-bar"><div class="ncr-fill" style="width:57%"></div></div>
+              <div class="ncr-pct">57%</div>
+            </div>
+          </div>
+
+          <div style="text-align:center;margin-top:var(--sp-xl)">
+            <a href="index.html#campaigns" class="btn-primary" style="display:inline-flex;">
+              <span>View All Campaigns</span>
+              <svg viewBox="0 0 20 20" fill="none" style="width:16px;height:16px;"><path d="M4 10h12M10 4l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Leadership Team -->
+        <div class="ngo-section scroll-reveal" data-delay="0.15">
+          <h2 class="ngo-section-title">Leadership Team</h2>
+          <div class="ngo-team-grid">
+            <div class="ngo-team-card">
+              <div class="ntc-avatar" style="background:linear-gradient(135deg,#1a3a2e,#52b788);">MR</div>
+              <div class="ntc-name">Maria Reyes</div>
+              <div class="ntc-role">Founder &amp; Executive Director</div>
+            </div>
+            <div class="ngo-team-card">
+              <div class="ntc-avatar" style="background:linear-gradient(135deg,#1b4f72,#2e86c1);">DS</div>
+              <div class="ntc-name">Dr. Samuel Obi</div>
+              <div class="ntc-role">Chief Science Officer</div>
+            </div>
+            <div class="ngo-team-card">
+              <div class="ntc-avatar" style="background:linear-gradient(135deg,#4a1942,#8e44ad);">AP</div>
+              <div class="ntc-name">Aisha Patel</div>
+              <div class="ntc-role">Director of Operations</div>
+            </div>
+            <div class="ngo-team-card">
+              <div class="ntc-avatar" style="background:linear-gradient(135deg,#7b1e1e,#c0392b);">JL</div>
+              <div class="ntc-name">James Liu</div>
+              <div class="ntc-role">Head of Partnerships</div>
+            </div>
+            <div class="ngo-team-card">
+              <div class="ntc-avatar" style="background:linear-gradient(135deg,#0d4f3a,#1a8c6c);">FC</div>
+              <div class="ntc-name">Fatima Coulibaly</div>
+              <div class="ntc-role">Director of Field Programs</div>
+            </div>
+            <div class="ngo-team-card">
+              <div class="ntc-avatar" style="background:linear-gradient(135deg,#0a2e3d,#117a8b);">RK</div>
+              <div class="ntc-name">Rajan Kumar</div>
+              <div class="ntc-role">Chief Financial Officer</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Sidebar -->
+      <div class="ngo-sidebar">
+
+        <!-- Key stats -->
+        <div class="ngo-stat-cards scroll-reveal" data-delay="0.05">
+          <div class="ngo-stat-card">
+            <div class="nsc-icon">🌳</div>
+            <div><div class="nsc-num">12.4M+</div><div class="nsc-label">Trees planted across 38 countries</div></div>
+          </div>
+          <div class="ngo-stat-card">
+            <div class="nsc-icon">💧</div>
+            <div><div class="nsc-num">850K</div><div class="nsc-label">People with new clean water access</div></div>
+          </div>
+          <div class="ngo-stat-card">
+            <div class="nsc-icon">🏫</div>
+            <div><div class="nsc-num">1,240</div><div class="nsc-label">Schools built & operational</div></div>
+          </div>
+          <div class="ngo-stat-card">
+            <div class="nsc-icon">🙋</div>
+            <div><div class="nsc-num">18K+</div><div class="nsc-label">Active volunteers worldwide</div></div>
+          </div>
+          <div class="ngo-stat-card">
+            <div class="nsc-icon">🌡️</div>
+            <div><div class="nsc-num">42K</div><div class="nsc-label">Tonnes CO₂ offset this year</div></div>
+          </div>
+        </div>
+
+        <!-- Certifications -->
+        <div class="ngo-certifications scroll-reveal" data-delay="0.1">
+          <h4>Certifications &amp; Trust</h4>
+          <div class="cert-row">
+            <div class="cert-row-icon">⭐</div>
+            <div class="cert-row-text">
+              <strong>4-Star Charity Rating</strong>
+              <span>Charity Navigator — highest rating</span>
+            </div>
+          </div>
+          <div class="cert-row">
+            <div class="cert-row-icon">🛡️</div>
+            <div class="cert-row-text">
+              <strong>GuideStar Platinum Seal</strong>
+              <span>Full financial transparency</span>
+            </div>
+          </div>
+          <div class="cert-row">
+            <div class="cert-row-icon">🏛️</div>
+            <div class="cert-row-text">
+              <strong>80G Tax Exemption</strong>
+              <span>All India donations tax deductible</span>
+            </div>
+          </div>
+          <div class="cert-row">
+            <div class="cert-row-icon">🔒</div>
+            <div class="cert-row-text">
+              <strong>SSL Secured Donations</strong>
+              <span>256-bit encryption on all payments</span>
+            </div>
+          </div>
+          <div class="cert-row">
+            <div class="cert-row-icon">🌐</div>
+            <div class="cert-row-text">
+              <strong>UN Partnership</strong>
+              <span>Signed 2015, UNEP affiliated</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="ngo-cta-box scroll-reveal" data-delay="0.15">
+          <h4>Make a difference today</h4>
+          <p>Every rupee goes directly to our programmes. No overhead, no surprises.</p>
+          <a href="index.html#donate">Donate Now →</a>
+        </div>
+
+      </div>
+    </div><!-- /ngo-content -->
+  </div><!-- /ngo-body -->
+
+  <!-- FOOTER (minimal) -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-bottom">
+      <div class="container">
+        <p>© 2024 Terra Nova Foundation. All rights reserved. | Registered NGO #1234567</p>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Use</a>
+          <a href="index.html">Back to Main Site</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Nav scroll behaviour
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // Mobile menu
+    const burger = document.getElementById('navBurger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    let menuOpen = false;
+    burger.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      burger.classList.toggle('open', menuOpen);
+      mobileMenu.classList.toggle('open', menuOpen);
+      mobileMenu.setAttribute('aria-hidden', !menuOpen);
+      burger.setAttribute('aria-expanded', menuOpen);
+      document.body.style.overflow = menuOpen ? 'hidden' : '';
+    });
+    document.querySelectorAll('.mobile-link').forEach(l => l.addEventListener('click', () => {
+      menuOpen = false;
+      burger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      mobileMenu.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }));
+
+    // Scroll reveal
+    const revealEls = document.querySelectorAll('.scroll-reveal');
+    if ('IntersectionObserver' in window) {
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            const delay = parseFloat(e.target.dataset.delay || 0) * 1000;
+            setTimeout(() => e.target.classList.add('revealed'), delay);
+            obs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+      revealEls.forEach(el => obs.observe(el));
+    } else {
+      revealEls.forEach(el => el.classList.add('revealed'));
+    }
+
+    // Scroll progress bar
+    const prog = document.createElement('div');
+    prog.style.cssText = 'position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,#52b788,#d4a853);z-index:9999;width:0%;transition:width 0.1s linear;pointer-events:none;';
+    document.body.appendChild(prog);
+    window.addEventListener('scroll', () => {
+      prog.style.width = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100) + '%';
+    }, { passive: true });
+  </script>
+</body>
+</html>

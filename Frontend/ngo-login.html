@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NGO Portal — Terra Nova</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --forest:      #1a3a2e;
+      --forest-mid:  #2d6a4f;
+      --forest-lt:   #52b788;
+      --gold:        #d4a853;
+      --gold-lt:     #e8c57a;
+      --ivory:       #f5f0e8;
+      --ivory-dk:    #ede6d8;
+      --muted:       #5a7365;
+      --white:       #ffffff;
+      --red:         #c0392b;
+      --amber:       #d97706;
+      --amber-bg:    #fffbeb;
+      --amber-border:#fbbf24;
+      --green-bg:    #f0fdf4;
+      --green-border:#86efac;
+      --radius:      10px;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--ivory);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      background: var(--forest);
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topbar-logo {
+      display: flex; align-items: center; gap: 8px;
+      text-decoration: none; color: var(--ivory);
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem; font-weight: 700;
+    }
+    .topbar-logo svg { width: 22px; height: 28px; color: var(--forest-lt); }
+    .topbar-back {
+      font-size: 0.82rem; color: rgba(245,240,232,0.6);
+      text-decoration: none; display: flex; align-items: center; gap: 5px;
+      transition: color 0.2s;
+    }
+    .topbar-back:hover { color: var(--ivory); }
+
+    .page {
+      flex: 1; display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: calc(100vh - 56px);
+    }
+
+    /* LEFT PANEL */
+    .left-panel {
+      background: linear-gradient(145deg, var(--forest) 0%, var(--forest-mid) 60%, #3a8a6a 100%);
+      padding: 60px 48px;
+      display: flex; flex-direction: column; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .left-panel::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 80% 30%, rgba(212,168,83,0.15) 0%, transparent 70%);
+    }
+    .left-panel::after {
+      content: ''; position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 36px 36px;
+    }
+    .lp-content { position: relative; z-index: 1; }
+    .lp-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: var(--gold-lt); font-size: 0.74rem; font-weight: 600;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 100px; margin-bottom: 28px;
+    }
+    .lp-badge span { width: 5px; height: 5px; background: var(--gold-lt); border-radius: 50%; }
+    .lp-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 700;
+      color: var(--ivory); line-height: 1.15; margin-bottom: 20px;
+    }
+    .lp-title em { font-style: italic; color: var(--gold-lt); }
+    .lp-desc {
+      font-size: 0.92rem; color: rgba(245,240,232,0.65);
+      line-height: 1.75; margin-bottom: 36px; max-width: 380px;
+    }
+    .lp-features { display: flex; flex-direction: column; gap: 14px; }
+    .lp-feature { display: flex; align-items: flex-start; gap: 12px; }
+    .lp-feature-icon {
+      width: 36px; height: 36px; background: rgba(255,255,255,0.08);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+    .lp-feature-text strong { display: block; font-size: 0.85rem; font-weight: 600; color: var(--ivory); }
+    .lp-feature-text span { font-size: 0.78rem; color: rgba(245,240,232,0.55); }
+
+    /* VERIFICATION BADGE on left panel */
+    .verify-badge {
+      margin-top: 32px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .verify-badge-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .verify-badge-text strong { display: block; font-size: 0.83rem; color: var(--ivory); margin-bottom: 2px; }
+    .verify-badge-text span { font-size: 0.75rem; color: rgba(245,240,232,0.5); line-height: 1.5; }
+
+    /* RIGHT PANEL */
+    .right-panel {
+      display: flex; align-items: center; justify-content: center;
+      padding: 40px 32px; background: var(--white);
+    }
+    .form-box { width: 100%; max-width: 440px; }
+
+    .form-tabs {
+      display: flex; gap: 0; background: var(--ivory-dk);
+      border-radius: var(--radius); padding: 4px; margin-bottom: 24px;
+    }
+    .form-tab {
+      flex: 1; padding: 9px; font-size: 0.85rem; font-weight: 600;
+      color: var(--muted); background: transparent; border: none;
+      border-radius: 7px; cursor: pointer; transition: all 0.2s;
+    }
+    .form-tab.active {
+      background: var(--white); color: var(--forest);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .form-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; font-weight: 700; color: var(--forest); margin-bottom: 6px;
+    }
+    .form-subtitle { font-size: 0.83rem; color: var(--muted); margin-bottom: 20px; }
+
+    .form-group { margin-bottom: 14px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    label {
+      display: block; font-size: 0.78rem; font-weight: 600;
+      color: var(--forest); margin-bottom: 5px; letter-spacing: 0.01em;
+    }
+    label .req { color: var(--red); }
+    input, select, textarea {
+      width: 100%; padding: 10px 13px; font-size: 0.88rem;
+      font-family: 'DM Sans', sans-serif; color: var(--forest);
+      background: var(--ivory); border: 1.5px solid #d9d0bc;
+      border-radius: var(--radius); outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--forest-mid);
+      box-shadow: 0 0 0 3px rgba(45,106,79,0.1);
+      background: var(--white);
+    }
+    textarea { resize: vertical; min-height: 70px; }
+
+    .btn-submit {
+      width: 100%; padding: 12px;
+      background: var(--forest); color: var(--ivory);
+      font-size: 0.9rem; font-weight: 600; font-family: 'DM Sans', sans-serif;
+      border: none; border-radius: var(--radius); cursor: pointer;
+      margin-top: 6px; transition: background 0.2s, transform 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-submit:hover { background: var(--forest-mid); transform: translateY(-1px); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    /* STATUS BANNERS */
+    .banner {
+      border-radius: var(--radius); padding: 12px 15px;
+      font-size: 0.82rem; line-height: 1.55;
+      margin-bottom: 14px; display: none;
+    }
+    .banner.show { display: block; }
+    .banner.error {
+      background: rgba(192,57,43,0.08); border: 1px solid rgba(192,57,43,0.2); color: var(--red);
+    }
+    .banner.pending {
+      background: var(--amber-bg); border: 1px solid var(--amber-border); color: #92400e;
+    }
+    .banner.rejected {
+      background: #fff1f2; border: 1px solid #fda4af; color: #9f1239;
+    }
+    .banner.success {
+      background: var(--green-bg); border: 1px solid var(--green-border); color: #166534;
+    }
+    .banner-icon { font-size: 1rem; margin-right: 4px; }
+
+    .form-section { display: none; }
+    .form-section.active { display: block; }
+
+    /* STATUS CHECK LINK */
+    .status-link {
+      text-align: center; margin-top: 16px; font-size: 0.78rem; color: var(--muted);
+    }
+    .status-link button {
+      background: none; border: none; color: var(--forest-mid);
+      cursor: pointer; font-size: 0.78rem; font-family: 'DM Sans', sans-serif;
+      font-weight: 600; text-decoration: underline;
+    }
+
+    /* STATUS CHECKER PANEL */
+    #statusPanel {
+      margin-top: 18px;
+      background: var(--ivory);
+      border: 1.5px solid var(--ivory-dk);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    #statusPanel h4 {
+      font-size: 0.8rem; font-weight: 700; color: var(--forest);
+      margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    #statusPanel .status-row { display: flex; gap: 8px; }
+    #statusPanel input { flex: 1; margin-bottom: 0; }
+    #statusPanel button {
+      padding: 10px 14px; background: var(--forest); color: var(--ivory);
+      border: none; border-radius: var(--radius); cursor: pointer;
+      font-size: 0.82rem; font-family: 'DM Sans', sans-serif; font-weight: 600;
+      white-space: nowrap;
+    }
+    #statusPanel button:hover { background: var(--forest-mid); }
+    #statusResult { margin-top: 10px; }
+
+    /* REQUIRED NOTE */
+    .required-note {
+      font-size: 0.74rem; color: var(--muted); margin-bottom: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .page { grid-template-columns: 1fr; }
+      .left-panel { display: none; }
+      .right-panel { padding: 32px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a href="index.html" class="topbar-logo">
+      <svg viewBox="0 0 32 42" fill="none">
+        <path d="M16 40 C16 40 2 30 2 16 C2 8 8 2 16 2 C24 2 30 8 30 16 C30 30 16 40 16 40Z" fill="currentColor"/>
+        <line x1="16" y1="40" x2="16" y2="10" stroke="#1a3a2e" stroke-width="1.2"/>
+      </svg>
+      Terra Nova
+    </a>
+    <a href="index.html" class="topbar-back">
+      <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to main site
+    </a>
+  </div>
+
+  <div class="page">
+
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+      <div class="lp-content">
+        <div class="lp-badge"><span></span>NGO Partner Portal</div>
+        <h1 class="lp-title">Manage your NGO<br/><em>with confidence.</em></h1>
+        <p class="lp-desc">Register your organisation and get a full dashboard to manage your profile, campaigns, and track impact — all in one place.</p>
+        <div class="lp-features">
+          <div class="lp-feature">
+            <div class="lp-feature-icon">🏛️</div>
+            <div class="lp-feature-text">
+              <strong>Organisation Profile</strong>
+              <span>Manage your name, mission, and details</span>
+            </div>
+          </div>
+          <div class="lp-feature">
+            <div class="lp-feature-icon">📣</div>
+            <div class="lp-feature-text">
+              <strong>Campaign Management</strong>
+              <span>Add, edit, and track your campaigns</span>
+            </div>
+          </div>
+          <div class="lp-feature">
+            <div class="lp-feature-icon">📊</div>
+            <div class="lp-feature-text">
+              <strong>Live Stats</strong>
+              <span>View donors, volunteers, and progress</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- VERIFICATION CALLOUT -->
+        <div class="verify-badge">
+          <div class="verify-badge-icon">🔐</div>
+          <div class="verify-badge-text">
+            <strong>Verified NGOs Only</strong>
+            <span>All registrations are manually reviewed by our admin team before access is granted. This ensures only legitimate, registered organisations use this portal.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+      <div class="form-box">
+
+        <div class="form-tabs">
+          <button class="form-tab active" onclick="switchTab('login')">Login</button>
+          <button class="form-tab" onclick="switchTab('register')">Register NGO</button>
+        </div>
+
+        <!-- BANNERS -->
+        <div class="banner error"   id="bannerError"></div>
+        <div class="banner pending" id="bannerPending"></div>
+        <div class="banner rejected" id="bannerRejected"></div>
+        <div class="banner success" id="bannerSuccess"></div>
+
+        <!-- ── LOGIN SECTION ── -->
+        <div class="form-section active" id="loginSection">
+          <div class="form-title">Welcome back</div>
+          <div class="form-subtitle">Sign in to your verified NGO dashboard</div>
+
+          <div class="form-group">
+            <label for="loginEmail">Email Address</label>
+            <input type="email" id="loginEmail" placeholder="your@ngo.org" autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" />
+          </div>
+          <button class="btn-submit" id="loginBtn" onclick="handleLogin()">
+            <span>Sign In</span>
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+
+          <p style="text-align:center;margin-top:12px;font-size:0.78rem;color:var(--muted)">
+            <button onclick="toggleForgot()" style="background:none;border:none;color:var(--forest-mid);cursor:pointer;font-size:0.78rem;font-family:'DM Sans',sans-serif;font-weight:600;text-decoration:underline;">Forgot password?</button>
+          </p>
+          <div id="ngoForgotPanel" style="display:none;margin-top:12px;background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:var(--radius);padding:14px;">
+            <p style="font-size:0.8rem;font-weight:700;color:#92400e;margin-bottom:10px;">🔑 Reset NGO Password</p>
+            <div style="display:flex;gap:8px;">
+              <input type="email" id="ngoForgotEmail" placeholder="Enter your registered email" style="flex:1;" />
+              <button onclick="sendNgoReset()" style="padding:10px 14px;background:var(--forest);color:var(--ivory);border:none;border-radius:var(--radius);cursor:pointer;font-size:0.82rem;font-family:'DM Sans',sans-serif;font-weight:600;white-space:nowrap;">Send Link</button>
+            </div>
+            <div id="ngoForgotMsg" style="margin-top:8px;font-size:0.78rem;"></div>
+          </div>
+
+          <!-- Status checker for NGOs waiting for approval -->
+          <div class="status-link">
+            <span>Registered but waiting? </span>
+            <button onclick="toggleStatusPanel()">Check your approval status</button>
+          </div>
+
+          <div id="statusPanel" style="display:none;">
+            <h4>🔍 Check Registration Status</h4>
+            <div class="status-row">
+              <input type="email" id="statusEmail" placeholder="Enter your registered email" />
+              <button onclick="checkStatus()">Check</button>
+            </div>
+            <div id="statusResult"></div>
+          </div>
+        </div>
+
+        <!-- ── REGISTER SECTION ── -->
+        <div class="form-section" id="registerSection">
+          <div class="form-title">Register your NGO</div>
+          <div class="form-subtitle">Submit your application for admin verification</div>
+          <p class="required-note"><span style="color:var(--red)">*</span> Required fields &nbsp;·&nbsp; You will receive an email once approved</p>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="regName">Organisation Name <span class="req">*</span></label>
+              <input type="text" id="regName" placeholder="e.g. Green Earth NGO" />
+            </div>
+            <div class="form-group">
+              <label for="regCategory">Focus Area</label>
+              <select id="regCategory">
+                <option value="environment">Environment</option>
+                <option value="water">Water</option>
+                <option value="education">Education</option>
+                <option value="health">Health</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="regEmail">Email Address <span class="req">*</span></label>
+            <input type="email" id="regEmail" placeholder="contact@yourngo.org" autocomplete="email" />
+          </div>
+
+          <div class="form-group">
+            <label for="regPassword">Password <span class="req">*</span> <span style="font-weight:400;color:var(--muted)">(min 8 characters)</span></label>
+            <input type="password" id="regPassword" placeholder="••••••••" autocomplete="new-password" />
+          </div>
+
+          <!-- REGISTRATION NUMBER — required for verification -->
+          <div class="form-group">
+            <label for="regRegNo">
+              NGO Registration Number <span class="req">*</span>
+              <span style="font-weight:400;color:var(--muted);font-size:0.72rem;"> (80G / 12A / FCRA / Darpan ID)</span>
+            </label>
+            <input type="text" id="regRegNo" placeholder="e.g. 80G/2021/0012345 or DPP-MH-00123" />
+          </div>
+
+          <div class="form-group">
+            <label for="regMission">Mission Statement</label>
+            <textarea id="regMission" placeholder="Briefly describe your NGO's mission and impact..."></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="regLocation">Location</label>
+              <input type="text" id="regLocation" placeholder="City, State" />
+            </div>
+            <div class="form-group">
+              <label for="regFounded">Founded Year</label>
+              <input type="text" id="regFounded" placeholder="e.g. 2010" />
+            </div>
+          </div>
+
+          <button class="btn-submit" id="registerBtn" onclick="handleRegister()">
+            <span>Submit Registration</span>
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+
+    // If already logged in, redirect
+    if (localStorage.getItem('ngo_token')) {
+      window.location.href = 'ngo-dashboard.html';
+    }
+
+    // ── TAB SWITCH ──────────────────────────────────────────
+    function switchTab(tab) {
+      document.querySelectorAll('.form-tab').forEach((t, i) => {
+        t.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'register'));
+      });
+      document.getElementById('loginSection').classList.toggle('active', tab === 'login');
+      document.getElementById('registerSection').classList.toggle('active', tab === 'register');
+      clearBanners();
+    }
+
+    // ── BANNER HELPERS ──────────────────────────────────────
+    function clearBanners() {
+      ['bannerError','bannerPending','bannerRejected','bannerSuccess'].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.remove('show');
+        el.innerHTML = '';
+      });
+    }
+    function showBanner(type, html) {
+      clearBanners();
+      const el = document.getElementById('banner' + type.charAt(0).toUpperCase() + type.slice(1));
+      el.innerHTML = html;
+      el.classList.add('show');
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // ── LOGIN ───────────────────────────────────────────────
+    async function handleLogin() {
+      clearBanners();
+      const email    = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      if (!email || !password) return showBanner('error', '⚠️ Please enter your email and password.');
+
+      const btn = document.getElementById('loginBtn');
+      btn.disabled = true;
+      btn.querySelector('span').textContent = 'Signing in…';
+
+      try {
+        const res  = await fetch(`${API}/api/ngo/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          localStorage.setItem('ngo_token', data.token);
+          localStorage.setItem('ngo_name',  data.ngo.name);
+          localStorage.setItem('ngo_email', data.ngo.email);
+          window.location.href = 'ngo-dashboard.html';
+          return;
+        }
+
+        // Handle specific statuses from server
+        if (data.status === 'pending') {
+          showBanner('pending',
+            '<span class="banner-icon">⏳</span><strong>Account Pending Verification</strong><br/>' +
+            'Your registration is under review by our admin team. This typically takes 1–3 business days. You will receive an email once approved.<br/>' +
+            '<span style="font-size:0.76rem;opacity:0.8;margin-top:4px;display:block;">Check your status below using your registered email.</span>'
+          );
+        } else if (data.status === 'rejected') {
+          showBanner('rejected',
+            '<span class="banner-icon">❌</span><strong>Registration Not Approved</strong><br/>' +
+            'Your NGO registration was not approved. Please contact us at <a href="mailto:support@terranova.org" style="color:inherit">support@terranova.org</a> for more information.'
+          );
+        } else {
+          showBanner('error', '⚠️ ' + (data.error || 'Login failed.'));
+        }
+      } catch {
+        showBanner('error', '⚠️ Could not connect to server. Please make sure the backend is running.');
+      } finally {
+        btn.disabled = false;
+        btn.querySelector('span').textContent = 'Sign In';
+      }
+    }
+
+    // ── REGISTER ────────────────────────────────────────────
+    async function handleRegister() {
+      clearBanners();
+      const name             = document.getElementById('regName').value.trim();
+      const email            = document.getElementById('regEmail').value.trim();
+      const password         = document.getElementById('regPassword').value;
+      const registrationNumber = document.getElementById('regRegNo').value.trim();
+      const mission          = document.getElementById('regMission').value.trim();
+      const location         = document.getElementById('regLocation').value.trim();
+      const founded          = document.getElementById('regFounded').value.trim();
+      const category         = document.getElementById('regCategory').value;
+
+      if (!name || !email || !password)
+        return showBanner('error', '⚠️ Organisation name, email and password are required.');
+      if (password.length < 8)
+        return showBanner('error', '⚠️ Password must be at least 8 characters.');
+      if (!registrationNumber)
+        return showBanner('error', '⚠️ NGO Registration Number is required for verification (e.g. 80G, FCRA, Darpan ID).');
+
+      const btn = document.getElementById('registerBtn');
+      btn.disabled = true;
+      btn.querySelector('span').textContent = 'Submitting…';
+
+      try {
+        const res  = await fetch(`${API}/api/ngo/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password, mission, location, founded, category, registrationNumber })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          showBanner('success',
+            '✅ <strong>Registration submitted successfully!</strong><br/>' +
+            'Your application is now <strong>pending admin verification</strong>. ' +
+            'You will receive a confirmation email shortly, and another email once your account is approved (typically 1–3 business days).' +
+            '<br/><br/>You <strong>cannot log in</strong> until your account is verified.'
+          );
+          // Clear the form
+          ['regName','regEmail','regPassword','regRegNo','regMission','regLocation','regFounded']
+            .forEach(id => document.getElementById(id).value = '');
+        } else {
+          showBanner('error', '⚠️ ' + (data.error || 'Registration failed.'));
+        }
+      } catch {
+        showBanner('error', '⚠️ Could not connect to server. Please make sure the backend is running.');
+      } finally {
+        btn.disabled = false;
+        btn.querySelector('span').textContent = 'Submit Registration';
+      }
+    }
+
+    // ── STATUS CHECKER ──────────────────────────────────────
+    function toggleStatusPanel() {
+      const panel = document.getElementById('statusPanel');
+      panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    }
+
+    async function checkStatus() {
+      const email  = document.getElementById('statusEmail').value.trim();
+      const result = document.getElementById('statusResult');
+      if (!email) { result.innerHTML = '<p style="color:var(--red);font-size:0.8rem;margin-top:8px">Please enter your email.</p>'; return; }
+
+      result.innerHTML = '<p style="font-size:0.8rem;color:var(--muted);margin-top:8px">Checking…</p>';
+
+      try {
+        const res  = await fetch(`${API}/api/ngo/status`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+
+        if (!data.success) {
+          result.innerHTML = `<p style="font-size:0.8rem;color:var(--red);margin-top:8px">⚠️ ${data.error}</p>`;
+          return;
+        }
+
+        const statusMap = {
+          pending:  { icon:'⏳', label:'Pending Review',  color:'#92400e', bg:'#fffbeb', border:'#fbbf24', msg:'Your registration is under review. Please wait for admin approval.' },
+          verified: { icon:'✅', label:'Verified',        color:'#166534', bg:'#f0fdf4', border:'#86efac', msg:'Your account is approved! You can now log in.' },
+          rejected: { icon:'❌', label:'Not Approved',    color:'#9f1239', bg:'#fff1f2', border:'#fda4af', msg:'Your registration was not approved. Contact support for help.' },
+        };
+        const s = statusMap[data.status] || { icon:'❓', label: data.status, color:'#374151', bg:'#f9fafb', border:'#e5e7eb', msg:'' };
+
+        result.innerHTML = `
+          <div style="margin-top:10px;background:${s.bg};border:1px solid ${s.border};border-radius:8px;padding:12px;">
+            <div style="font-weight:700;color:${s.color};font-size:0.85rem;margin-bottom:4px;">${s.icon} ${data.name} — ${s.label}</div>
+            <div style="font-size:0.78rem;color:${s.color}">${s.msg}</div>
+            ${data.rejectionReason ? `<div style="font-size:0.75rem;color:${s.color};margin-top:6px"><strong>Reason:</strong> ${data.rejectionReason}</div>` : ''}
+          </div>
+        `;
+      } catch {
+        result.innerHTML = '<p style="font-size:0.8rem;color:var(--red);margin-top:8px">⚠️ Could not connect to server.</p>';
+      }
+    }
+
+    // Enter key support
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      if (document.getElementById('loginSection').classList.contains('active')) handleLogin();
+      else handleRegister();
+    });
+
+    function toggleForgot() {
+      const p = document.getElementById('ngoForgotPanel');
+      p.style.display = p.style.display === 'none' ? 'block' : 'none';
+    }
+
+    async function sendNgoReset() {
+      const email = document.getElementById('ngoForgotEmail').value.trim();
+      const msg   = document.getElementById('ngoForgotMsg');
+      if (!email) { msg.style.color='var(--red)'; msg.textContent='Please enter your email.'; return; }
+      msg.style.color='#92400e'; msg.textContent='Sending…';
+      try {
+        // Build frontendUrl: use 127.0.0.1 with the correct port and path prefix
+        const _origin = window.location.origin.replace(/^(https?:\/\/)[\d.]+/, '$1127.0.0.1');
+        const _pathPrefix = window.location.pathname.replace(/\/[^/]*$/, ''); // e.g. /Frontend
+        const frontendUrl = _origin + _pathPrefix;
+        const res  = await fetch(`${API}/api/ngo/forgot-password`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email, frontendUrl}) });
+        const data = await res.json();
+        msg.style.color = data.success ? '#166534' : 'var(--red)';
+        msg.textContent = data.success ? '✅ Reset link sent! Check your email.' : '⚠️ ' + (data.error||'Failed.');
+      } catch { msg.style.color='var(--red)'; msg.textContent='⚠️ Could not connect to server.'; }
+    }
+  </script>
+</body>
+</html>
