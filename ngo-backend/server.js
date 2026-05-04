@@ -80,6 +80,7 @@ const donateLimiter = rateLimit({
 
 app.use(cors());
 app.use(express.json());
+app.set('trust proxy', 1); // Required for rate limiting behind Render/proxy
 
 // Apply general limiter to all routes
 app.use('/api/', generalLimiter);
@@ -117,9 +118,10 @@ mongoose.connect(process.env.MONGO_URI, {
 // ── EMAIL TRANSPORTER ────────────────────────────────────────
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
-  port: parseInt(process.env.EMAIL_PORT),
+  port: 2525,
   secure: false,
   auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+  tls: { rejectUnauthorized: false },
 });
 transporter.verify(err => {
   if (err) console.error('❌ Email setup error:', err.message);
