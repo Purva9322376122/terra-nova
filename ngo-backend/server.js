@@ -10,6 +10,7 @@ const cors       = require('cors');
 const bcrypt     = require('bcryptjs');
 const jwt        = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
+const crypto     = require('crypto');
 
 const ApprovedNgo = require('./models/ApprovedNgo');
 const Volunteer  = require('./models/volunteer');
@@ -1495,7 +1496,6 @@ app.post('/api/volunteer/reset-password', async (req, res) => {
 
 // ── RAZORPAY SETUP ────────────────────────────────────────────
 const Razorpay = require('razorpay');
-const crypto   = require('crypto');
 
 const razorpay = new Razorpay({
   key_id:     process.env.RAZORPAY_KEY_ID,
