@@ -244,7 +244,12 @@ function renderCampaignCards(campaigns) {
             <span>🙋 ${c.volunteers || 0} volunteers needed</span>
           </div>
         </div>
-        <button class="btn-card" onclick="openDonate('${c.title.replace(/'/g,"\\'")}', '${c.ngoId}', '${c._id}')">Support Campaign</button>
+        <div style="display:flex;gap:8px;margin-top:8px;align-items:stretch">
+          <button class="btn-card" style="flex:1" onclick="openDonate('${c.title.replace(/'/g,"\\'")}', '${c.ngoId}', '${c._id}')">Support Campaign</button>
+          <button onclick="toggleWishlist('${c.title.replace(/'/g,"\\'")}', this)" title="Save to Wishlist"
+            style="padding:8px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;cursor:pointer;font-size:1rem;transition:all 0.2s;color:#e88080"
+            data-campaign="${c.title.replace(/'/g,"\\'")}">❤️</button>
+        </div>
         <div style="display:flex;gap:8px;margin-top:8px">
           <a href="https://wa.me/?text=${encodeURIComponent('Support this campaign: ' + c.title + ' by ' + c.ngoName + ' — Donate at http://127.0.0.1:3000')}" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px;background:#25D366;color:#fff;border-radius:8px;font-size:0.75rem;font-weight:600;text-decoration:none">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.528 5.855L0 24l6.335-1.508A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.65-.502-5.18-1.38l-.37-.22-3.762.895.952-3.67-.242-.38A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
@@ -427,6 +432,54 @@ function renderCampaignCards(campaigns) {
     bar.innerHTML = `💡 <a href="donor-login.html" style="color:#7a5c00;font-weight:600">Log in or create a donor account</a> to track this donation in your history.`;
   }
 })();
+
+// ── WISHLIST TOGGLE ──────────────────────────────────────────
+window.toggleWishlist = async function(campaignName, btn) {
+  const token = localStorage.getItem('donor_token');
+  if (!token) {
+    // Not logged in — redirect to donor login
+    alert('Please log in as a donor to save campaigns to your wishlist.');
+    window.location.href = 'donor-login.html';
+    return;
+  }
+
+  const isWishlisted = btn.dataset.wishlisted === 'true';
+
+  try {
+    if (isWishlisted) {
+      // Remove from wishlist
+      const res  = await fetch(`${API}/api/donor/wishlist`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ campaign: campaignName })
+      });
+      const data = await res.json();
+      if (data.success) {
+        btn.dataset.wishlisted = 'false';
+        btn.textContent = '🤍';
+        btn.title = 'Save to Wishlist';
+        btn.style.background = 'rgba(255,255,255,0.06)';
+      }
+    } else {
+      // Add to wishlist
+      const res  = await fetch(`${API}/api/donor/wishlist`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ campaign: campaignName })
+      });
+      const data = await res.json();
+      if (data.success) {
+        btn.dataset.wishlisted = 'true';
+        btn.textContent = '❤️';
+        btn.title = 'Remove from Wishlist';
+        btn.style.background = 'rgba(232,128,128,0.15)';
+        btn.style.borderColor = 'rgba(232,128,128,0.3)';
+      }
+    }
+  } catch (e) {
+    console.error('Wishlist error:', e);
+  }
+};
 
 window.handleDonate = function() {
   const btn      = document.getElementById('donateNowBtn');
